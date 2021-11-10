@@ -4,8 +4,8 @@ import { keyBy } from 'lodash';
 import { useAppSelector, useAppDispatch, useAppDispatchAndUnwrap, useDebounce, useAppTranslation } from '@hooks';
 import {
   TokensSelectors,
-  LabsSelectors,
-  LabsActions,
+  NavsSelectors,
+  NavsActions,
   TokensActions,
   VaultsActions,
   VaultsSelectors,
@@ -28,11 +28,11 @@ import { getConfig } from '@config';
 
 import { Transaction } from '../Transaction';
 
-export interface LabDepositTxProps {
+export interface NavDepositTxProps {
   onClose?: () => void;
 }
 
-export const LabDepositTx: FC<LabDepositTxProps> = ({ onClose }) => {
+export const NavDepositTx: FC<NavDepositTxProps> = ({ onClose }) => {
   const { t } = useAppTranslation('common');
 
   const dispatch = useAppDispatch();
@@ -44,32 +44,32 @@ export const LabDepositTx: FC<LabDepositTxProps> = ({ onClose }) => {
   const [txCompleted, setTxCompleted] = useState(false);
   const currentNetwork = useAppSelector(NetworkSelectors.selectCurrentNetwork);
   const currentNetworkSettings = NETWORK_SETTINGS[currentNetwork];
-  const selectedLab = useAppSelector(LabsSelectors.selectSelectedLab);
+  const selectedNav = useAppSelector(NavsSelectors.selectSelectedNav);
   const selectedSellTokenAddress = useAppSelector(TokensSelectors.selectSelectedTokenAddress);
   let userTokens = useAppSelector(TokensSelectors.selectZapInTokens);
-  userTokens = selectedLab?.allowZapIn ? userTokens : [];
+  userTokens = selectedNav?.allowZapIn ? userTokens : [];
   const selectedSlippage = useAppSelector(SettingsSelectors.selectDefaultSlippage);
 
-  // TODO: ADD EXPECTED OUTCOME TO LABS
+  // TODO: ADD EXPECTED OUTCOME TO NAVS
   const expectedTxOutcome = useAppSelector(VaultsSelectors.selectExpectedTxOutcome);
   const expectedTxOutcomeStatus = useAppSelector(VaultsSelectors.selectExpectedTxOutcomeStatus);
-  const actionsStatus = useAppSelector(LabsSelectors.selectSelectedLabActionsStatusMap);
+  const actionsStatus = useAppSelector(NavsSelectors.selectSelectedNavActionsStatusMap);
 
-  const sellTokensOptions = selectedLab
-    ? [selectedLab.token, ...userTokens.filter(({ address }) => address !== selectedLab.token.address)]
+  const sellTokensOptions = selectedNav
+    ? [selectedNav.token, ...userTokens.filter(({ address }) => address !== selectedNav.token.address)]
     : userTokens;
   const sellTokensOptionsMap = keyBy(sellTokensOptions, 'address');
   const selectedSellToken = sellTokensOptionsMap[selectedSellTokenAddress ?? ''];
 
   const onExit = () => {
-    dispatch(LabsActions.clearSelectedLabAndStatus());
+    dispatch(NavsActions.clearSelectedNavAndStatus());
     dispatch(VaultsActions.clearTransactionData());
     dispatch(TokensActions.setSelectedTokenAddress({ tokenAddress: undefined }));
   };
 
   useEffect(() => {
-    if (!selectedSellTokenAddress && selectedLab) {
-      dispatch(TokensActions.setSelectedTokenAddress({ tokenAddress: selectedLab.defaultDisplayToken }));
+    if (!selectedSellTokenAddress && selectedNav) {
+      dispatch(TokensActions.setSelectedTokenAddress({ tokenAddress: selectedNav.defaultDisplayToken }));
     }
 
     return () => {
@@ -78,10 +78,10 @@ export const LabDepositTx: FC<LabDepositTxProps> = ({ onClose }) => {
   }, []);
 
   useEffect(() => {
-    if (!selectedLab || !selectedSellTokenAddress) return;
+    if (!selectedNav || !selectedSellTokenAddress) return;
 
-    const isZap = selectedSellTokenAddress !== selectedLab.token.address || selectedLab.address === PSLPYVBOOSTETH;
-    const spenderAddress = isZap ? getZapInContractAddress(selectedLab.address) : selectedLab.address;
+    const isZap = selectedSellTokenAddress !== selectedNav.token.address || selectedNav.address === PSLPYVBOOSTETH;
+    const spenderAddress = isZap ? getZapInContractAddress(selectedNav.address) : selectedNav.address;
 
     dispatch(
       TokensActions.getTokenAllowance({
@@ -89,40 +89,40 @@ export const LabDepositTx: FC<LabDepositTxProps> = ({ onClose }) => {
         spenderAddress,
       })
     );
-  }, [selectedSellTokenAddress, selectedLab?.address]);
+  }, [selectedSellTokenAddress, selectedNav?.address]);
 
   useEffect(() => {
-    if (!selectedLab) return;
-    dispatch(LabsActions.clearLabStatus({ labAddress: selectedLab.address }));
-  }, [debouncedAmount, selectedSellTokenAddress, selectedLab]);
+    if (!selectedNav) return;
+    dispatch(NavsActions.clearNavStatus({ navAddress: selectedNav.address }));
+  }, [debouncedAmount, selectedSellTokenAddress, selectedNav]);
 
-  // TODO: SET LABS SIMULATION
+  // TODO: SET NAVS SIMULATION
   useEffect(() => {
-    if (!selectedLab || !selectedSellTokenAddress) return;
+    if (!selectedNav || !selectedSellTokenAddress) return;
     if (toBN(debouncedAmount).gt(0) && !inputError) {
       dispatch(
         VaultsActions.getExpectedTransactionOutcome({
           transactionType: 'DEPOSIT',
           sourceTokenAddress: selectedSellTokenAddress,
           sourceTokenAmount: toWei(debouncedAmount, selectedSellToken.decimals),
-          targetTokenAddress: selectedLab.address,
+          targetTokenAddress: selectedNav.address,
         })
       );
     }
   }, [debouncedAmount]);
 
-  if (!selectedLab || !selectedSellTokenAddress || !selectedSellToken || !sellTokensOptions) {
+  if (!selectedNav || !selectedSellTokenAddress || !selectedSellToken || !sellTokensOptions) {
     return null;
   }
 
   let isApproved: boolean | undefined;
   let allowanceError: string | undefined;
 
-  if (selectedLab.address === YVBOOST) {
+  if (selectedNav.address === YVBOOST) {
     const { approved, error } = validateVaultAllowance({
       amount: toBN(debouncedAmount),
-      vaultAddress: selectedLab.address,
-      vaultUnderlyingTokenAddress: selectedLab.token.address,
+      vaultAddress: selectedNav.address,
+      vaultUnderlyingTokenAddress: selectedNav.token.address,
       sellTokenAddress: selectedSellTokenAddress,
       sellTokenDecimals: selectedSellToken.decimals.toString(),
       sellTokenAllowancesMap: selectedSellToken.allowancesMap,
@@ -131,7 +131,7 @@ export const LabDepositTx: FC<LabDepositTxProps> = ({ onClose }) => {
     allowanceError = error;
   }
 
-  if (selectedLab.address === PSLPYVBOOSTETH) {
+  if (selectedNav.address === PSLPYVBOOSTETH) {
     const { approved, error } = validateYvBoostEthActionsAllowance({
       action: 'INVEST',
       sellTokenAmount: toBN(debouncedAmount),
@@ -149,7 +149,7 @@ export const LabDepositTx: FC<LabDepositTxProps> = ({ onClose }) => {
     emergencyShutdown: false,
     sellTokenDecimals: selectedSellToken.decimals.toString(),
     userTokenBalance: selectedSellToken.balance,
-    vaultUnderlyingBalance: selectedLab.labBalance,
+    vaultUnderlyingBalance: selectedNav.navBalance,
   });
 
   const { error: slippageError } = validateSlippage({
@@ -168,19 +168,19 @@ export const LabDepositTx: FC<LabDepositTxProps> = ({ onClose }) => {
     loading: expectedTxOutcomeStatus.loading || isDebouncePending,
   };
 
-  const selectedLabOption = {
-    address: selectedLab.address,
-    symbol: selectedLab.displayName,
-    icon: selectedLab.displayIcon,
-    balance: selectedLab.DEPOSIT.userBalance,
-    balanceUsdc: selectedLab.DEPOSIT.userDepositedUsdc,
-    decimals: toBN(selectedLab.decimals).toNumber(),
-    yield: formatPercent(selectedLab.apyData, 2),
+  const selectedNavOption = {
+    address: selectedNav.address,
+    symbol: selectedNav.displayName,
+    icon: selectedNav.displayIcon,
+    balance: selectedNav.DEPOSIT.userBalance,
+    balanceUsdc: selectedNav.DEPOSIT.userDepositedUsdc,
+    decimals: toBN(selectedNav.decimals).toNumber(),
+    yield: formatPercent(selectedNav.apyData, 2),
   };
 
   const amountValue = toBN(amount).times(normalizeAmount(selectedSellToken.priceUsdc, USDC_DECIMALS)).toString();
   const expectedAmount = toBN(debouncedAmount).gt(0)
-    ? normalizeAmount(expectedTxOutcome?.targetUnderlyingTokenAmount, selectedLab?.token.decimals)
+    ? normalizeAmount(expectedTxOutcome?.targetUnderlyingTokenAmount, selectedNav?.token.decimals)
     : '';
   const expectedAmountValue = toBN(debouncedAmount).gt(0)
     ? normalizeAmount(expectedTxOutcome?.targetTokenAmountUsdc, USDC_DECIMALS)
@@ -195,9 +195,9 @@ export const LabDepositTx: FC<LabDepositTxProps> = ({ onClose }) => {
     dispatch(TokensActions.setSelectedTokenAddress({ tokenAddress }));
   };
 
-  const onSelectedLabChange = (labAddress: string) => {
+  const onSelectedNavChange = (navAddress: string) => {
     setAmount('');
-    dispatch(LabsActions.setSelectedLabAddress({ labAddress }));
+    dispatch(NavsActions.setSelectedNavAddress({ navAddress }));
   };
 
   const onTransactionCompletedDismissed = () => {
@@ -206,8 +206,8 @@ export const LabDepositTx: FC<LabDepositTxProps> = ({ onClose }) => {
 
   const approve = async () => {
     await dispatch(
-      LabsActions.approveDeposit({
-        labAddress: selectedLab.address,
+      NavsActions.approveDeposit({
+        navAddress: selectedNav.address,
         tokenAddress: selectedSellToken.address,
       })
     );
@@ -216,8 +216,8 @@ export const LabDepositTx: FC<LabDepositTxProps> = ({ onClose }) => {
   const deposit = async () => {
     try {
       await dispatchAndUnwrap(
-        LabsActions.deposit({
-          labAddress: selectedLab.address,
+        NavsActions.deposit({
+          navAddress: selectedNav.address,
           tokenAddress: selectedSellToken.address,
           amount: toBN(amount),
           slippageTolerance: selectedSlippage,
@@ -258,9 +258,9 @@ export const LabDepositTx: FC<LabDepositTxProps> = ({ onClose }) => {
       sourceAmountValue={amountValue}
       onSourceAmountChange={setAmount}
       targetHeader={t('components.transaction.to-vault')}
-      targetAssetOptions={[selectedLabOption]}
-      selectedTargetAsset={selectedLabOption}
-      onSelectedTargetAssetChange={onSelectedLabChange}
+      targetAssetOptions={[selectedNavOption]}
+      selectedTargetAsset={selectedNavOption}
+      onSelectedTargetAssetChange={onSelectedNavChange}
       targetAmount={expectedAmount}
       targetAmountValue={expectedAmountValue}
       targetStatus={targetStatus}

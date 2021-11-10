@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useAppSelector, useAppTranslation } from '@hooks';
 import {
   IronBankSelectors,
-  LabsSelectors,
+  NavsSelectors,
   TokensSelectors,
   VaultsSelectors,
   WalletSelectors,
@@ -63,13 +63,13 @@ export const Home = () => {
   const currentNetworkSettings = NETWORK_SETTINGS[currentNetwork];
   const walletIsConnected = useAppSelector(WalletSelectors.selectWalletIsConnected);
   const vaultsSummary = useAppSelector(VaultsSelectors.selectSummaryData);
-  const labsSummary = useAppSelector(LabsSelectors.selectSummaryData);
+  const navsSummary = useAppSelector(NavsSelectors.selectSummaryData);
   const ibSummary = useAppSelector(IronBankSelectors.selectSummaryData);
   const walletSummary = useAppSelector(TokensSelectors.selectSummaryData);
 
   const netWorth = toBN(vaultsSummary.totalDeposits)
     .plus(walletSummary.totalBalance)
-    .plus(labsSummary.totalDeposits)
+    .plus(navsSummary.totalDeposits)
     .plus(ibSummary.supplyBalanceUsdc)
     .toString();
 
@@ -110,8 +110,7 @@ export const Home = () => {
           Component={
             <Text>
               <p>
-                {t('components.beta-card.desc-1')} <StyledLink href="https://discord.gg/Rw9zA3GbyE">Discord</StyledLink>
-                .
+                {t('components.beta-card.desc-1')} <StyledLink href="https://discord.gg/W5aUBpy4">Discord</StyledLink>.
               </p>
             </Text>
           }
@@ -169,16 +168,16 @@ export const Home = () => {
             cardSize="small"
           />
 
-          {currentNetworkSettings.labsEnabled && (
+          {currentNetworkSettings.navsEnabled && (
             <StyledSummaryCard
-              header={t('navigation.labs')}
+              header={t('navigation.navs')}
               items={[
                 {
                   header: t('dashboard.holdings'),
-                  Component: <Amount value={labsSummary.totalDeposits} input="usdc" />,
+                  Component: <Amount value={navsSummary.totalDeposits} input="usdc" />,
                 },
               ]}
-              redirectTo="labs"
+              redirectTo="navs"
               cardSize="small"
             />
           )}

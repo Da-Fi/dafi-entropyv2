@@ -1,13 +1,13 @@
 import { getContract } from '@frameworks/ethers';
 import {
-  LabService,
+  NavService,
   Web3Provider,
   Position,
-  GetUserLabsMetadataProps,
-  GetUserLabsPositionsProps,
-  Lab,
-  LabDynamic,
-  LabUserMetadata,
+  GetUserNavsMetadataProps,
+  GetUserNavsPositionsProps,
+  Nav,
+  NavDynamic,
+  NavUserMetadata,
   Config,
   DepositProps,
   WithdrawProps,
@@ -16,7 +16,7 @@ import {
   TransactionResponse,
   TransactionService,
   YearnSdk,
-  GetSupportedLabsProps,
+  GetSupportedNavsProps,
 } from '@types';
 import { get, toBN, normalizeAmount, USDC_DECIMALS, getStakingContractAddress, getProviderType } from '@utils';
 
@@ -26,7 +26,7 @@ import yvBoostAbi from './contracts/yvBoost.json';
 import pickleJarAbi from './contracts/pickleJar.json';
 import pickleGaugeAbi from './contracts/pickleGauge.json';
 
-export class LabServiceImpl implements LabService {
+export class NavServiceImpl implements NavService {
   private transactionService: TransactionService;
   private yearnSdk: YearnSdk;
   private web3Provider: Web3Provider;
@@ -49,7 +49,7 @@ export class LabServiceImpl implements LabService {
     this.config = config;
   }
 
-  public async getSupportedLabs({ network }: GetSupportedLabsProps) {
+  public async getSupportedNavs({ network }: GetSupportedNavsProps) {
     const errors: string[] = [];
     const { YEARN_API, CONTRACT_ADDRESSES } = this.config;
     const { ETH, YVECRV, CRV, YVBOOST, PSLPYVBOOSTETH } = CONTRACT_ADDRESSES;
@@ -62,16 +62,16 @@ export class LabServiceImpl implements LabService {
     const [vaultsResponse, pricesResponse] = await Promise.all([vaultsPromise, pricesPromise]);
 
     // **************** BACKSCRATCHER ****************
-    let backscratcherLab: Lab | undefined;
+    let backscratcherNav: Nav | undefined;
     try {
       const backscratcherContract = getContract(YVECRV, backscratcherAbi, provider);
       const totalSupply = await backscratcherContract.totalSupply();
       const backscratcherData = vaultsResponse.data.find(({ address }: { address: string }) => address === YVECRV);
       if (!backscratcherData) throw new Error(`yveCRV vault not found on ${YEARN_API} response`);
       const crvPrice = pricesResponse.data['curve-dao-token']['usd'];
-      backscratcherLab = {
+      backscratcherNav = {
         address: YVECRV,
-        typeId: 'LAB',
+        typeId: 'NAV',
         token: CRV,
         name: backscratcherData.name,
         version: backscratcherData.version,
@@ -100,11 +100,11 @@ export class LabServiceImpl implements LabService {
       };
     } catch (error) {
       // TODO handle error
-      errors.push('YveCrv Lab Error');
+      errors.push('YveCrv Nav Error');
     }
 
     // **************** YVBOOST ****************
-    let yvBoostLab: Lab | undefined;
+    let yvBoostNav: Nav | undefined;
     try {
       const yvBoostContract = getContract(YVBOOST, yvBoostAbi, provider);
       const [totalAssets, pricePerShare, depositLimit, emergencyShutdown] = await Promise.all([
@@ -116,9 +116,9 @@ export class LabServiceImpl implements LabService {
       const yvBoostData = vaultsResponse.data.find(({ address }: { address: string }) => address === YVBOOST);
       if (!yvBoostData) throw new Error(`yvBoost vault not found on ${YEARN_API} response`);
       const yveCrvPrice = pricesResponse.data['vecrv-dao-yvault']['usd'];
-      yvBoostLab = {
+      yvBoostNav = {
         address: YVBOOST,
-        typeId: 'LAB',
+        typeId: 'NAV',
         token: YVECRV,
         name: yvBoostData.name,
         version: yvBoostData.version,
@@ -143,11 +143,11 @@ export class LabServiceImpl implements LabService {
         },
       };
     } catch (error) {
-      errors.push('YvBoost Lab Error');
+      errors.push('YvBoost Nav Error');
     }
 
     // **************** YVBOOST-ETH ****************
-    let pSLPyvBoostEthLab: Lab | undefined;
+    let pSLPyvBoostEthNav: Nav | undefined;
     try {
       const pSLPyvBoostEthContract = getContract(PSLPYVBOOSTETH, pickleJarAbi, provider);
       const pJarTotalSupplyPromise = pSLPyvBoostEthContract.totalSupply();
@@ -167,9 +167,9 @@ export class LabServiceImpl implements LabService {
       // USE YVBOOST DATA AS BASE DATA SOURCE
       const pJarData = vaultsResponse.data.find(({ address }: { address: string }) => address === YVBOOST);
       if (!pJarData) throw new Error(`yvBoost vault not found on ${YEARN_API} response`);
-      pSLPyvBoostEthLab = {
+      pSLPyvBoostEthNav = {
         address: PSLPYVBOOSTETH,
-        typeId: 'LAB',
+        typeId: 'NAV',
         token: YVBOOST,
         name: 'pSLPyvBOOST-ETH',
         version: pJarData.version,
@@ -196,22 +196,22 @@ export class LabServiceImpl implements LabService {
         },
       };
     } catch (error) {
-      errors.push('YvBoost-Eth Lab Error');
+      errors.push('YvBoost-Eth Nav Error');
     }
 
     // ********************************
-    const labsData: Lab[] = [];
-    [backscratcherLab, yvBoostLab, pSLPyvBoostEthLab].forEach((lab) => {
-      if (lab) labsData.push(lab);
+    const navsData: Nav[] = [];
+    [backscratcherNav, yvBoostNav, pSLPyvBoostEthNav].forEach((nav) => {
+      if (nav) navsData.push(nav);
     });
-    return { labsData, errors };
+    return { navsData, errors };
   }
 
-  public async getLabsDynamicData(): Promise<LabDynamic[]> {
+  public async getNavsDynamicData(): Promise<NavDynamic[]> {
     throw Error('Not Implemented');
   }
 
-  public async getUserLabsPositions(props: GetUserLabsPositionsProps) {
+  public async getUserNavsPositions(props: GetUserNavsPositionsProps) {
     const { userAddress, network } = props;
     const { YEARN_API, ZAPPER_API_KEY, CONTRACT_ADDRESSES } = this.config;
     const { YVECRV, CRV, THREECRV, YVBOOST, PSLPYVBOOSTETH, PSLPYVBOOSTETH_GAUGE } = CONTRACT_ADDRESSES;
@@ -401,7 +401,7 @@ export class LabServiceImpl implements LabService {
     return { positions, errors };
   }
 
-  public async getUserLabsMetadata(props: GetUserLabsMetadataProps): Promise<LabUserMetadata[]> {
+  public async getUserNavsMetadata(props: GetUserNavsMetadataProps): Promise<NavUserMetadata[]> {
     throw Error('Not Implemented');
   }
 

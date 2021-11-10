@@ -177,27 +177,27 @@ export interface ValidateExitMarketsProps {
   marketCollateralFactor: string;
   userIronBankSummary: IronBankUserSummary | undefined;
 }
-// ********************* Labs *********************
+// ********************* Navs *********************
 
-// TODO: IMPLEMENT GENERIC LAB VALIDATIONS
+// TODO: IMPLEMENT GENERIC NAV VALIDATIONS
 
-// type LabAction = 'DEPOSIT' | 'WITHDRAW' | 'STAKE' | 'CLAIM' | 'REINVEST';
+// type NavAction = 'DEPOSIT' | 'WITHDRAW' | 'STAKE' | 'CLAIM' | 'REINVEST';
 
-// interface ValidateLabActionProps extends ValidateVaultDepositProps {
-//   action: LabAction;
+// interface ValidateNavActionProps extends ValidateVaultDepositProps {
+//   action: NavAction;
 // }
 
-// interface ValidateLabActionAllowanceProps extends ValidateVaultAllowanceProps {
-//   action: LabAction;
+// interface ValidateNavActionAllowanceProps extends ValidateVaultAllowanceProps {
+//   action: NavAction;
 // }
 
-// export function validateLabActionsAllowance(): ValidationResponse {
-//   // TODO: GENERAL VALIDATION FOR LABS BASED ON LAB ADDRESS AND ACTION
+// export function validateNavActionsAllowance(): ValidationResponse {
+//   // TODO: GENERAL VALIDATION FOR NAVS BASED ON NAV ADDRESS AND ACTION
 //   return {};
 // }
 
-// export function validateLabActions(): ValidationResponse {
-//   // TODO: GENERAL VALIDATION FOR LABS BASED ON LAB ADDRESS AND ACTION
+// export function validateNavActions(): ValidationResponse {
+//   // TODO: GENERAL VALIDATION FOR NAVS BASED ON NAV ADDRESS AND ACTION
 //   return {};
 // }
 
@@ -230,7 +230,7 @@ export function validateYvBoostEthActionsAllowance(props: ValidateYvBoostEthActi
 }
 
 interface ValidateYveCrvActionsAllowanceProps {
-  labAddress: string;
+  navAddress: string;
   sellTokenAddress: string;
   sellTokenAmount: BigNumber;
   sellTokenDecimals: string;
@@ -240,12 +240,12 @@ interface ValidateYveCrvActionsAllowanceProps {
 
 export function validateYveCrvActionsAllowance(props: ValidateYveCrvActionsAllowanceProps): ValidationResponse {
   const { y3CrvBackZapper, CRV, THREECRV, YVECRV } = getConfig().CONTRACT_ADDRESSES;
-  const { labAddress, sellTokenAddress, sellTokenAmount, sellTokenDecimals, sellTokenAllowancesMap, action } = props;
+  const { navAddress, sellTokenAddress, sellTokenAmount, sellTokenDecimals, sellTokenAllowancesMap, action } = props;
   let spenderAddress: string = '';
-  if (labAddress !== YVECRV) throw new Error('Only yveCrv is supported as labAddress for this method');
+  if (navAddress !== YVECRV) throw new Error('Only yveCrv is supported as navAddress for this method');
 
   if (action === 'LOCK') {
-    spenderAddress = labAddress;
+    spenderAddress = navAddress;
     if (sellTokenAddress !== CRV) throw new Error('Only Crv token is supported for YveCrv LOCK action');
   }
   if (action === 'REINVEST') {

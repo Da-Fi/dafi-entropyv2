@@ -1,8 +1,8 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 
-import { ReactComponent as LogoSimple } from '@assets/images/yearn-logo.svg';
-import { ReactComponent as LogoFull } from '@assets/images/yearn-logo-full.svg';
+import { ReactComponent as LogoSimple } from '@assets/images/dafidao-icon-only-tprntfull.svg';
+import { ReactComponent as LogoFull } from '@assets/images/dafidao-text-95x25.svg';
 
 export interface LogoProps {
   className?: string;
@@ -26,12 +26,12 @@ const StyledLogoSimple = styled(LogoSimple)`
 `;
 const StyledLogoFull = styled(LogoFull)`
   height: 100%;
-  width: auto;
+  width: 50%;
   fill: inherit;
 `;
 
 export const Logo: FC<LogoProps> = ({ className, full, onClick, ...props }) => {
-  const logoSvg = full ? <StyledLogoFull /> : <StyledLogoSimple />;
+  const logoSvg = full ? <StyledLogoSimple /> : <StyledLogoFull />;
 
   return (
     <StyledLogo className={className} onClick={onClick} {...props}>

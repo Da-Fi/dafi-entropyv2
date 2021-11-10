@@ -1,7 +1,7 @@
 import { FC, useState, useEffect } from 'react';
 
 import { useAppSelector, useAppDispatch, useAppDispatchAndUnwrap, useDebounce, useAppTranslation } from '@hooks';
-import { TokensActions, LabsSelectors, LabsActions, VaultsActions } from '@store';
+import { TokensActions, NavsSelectors, NavsActions, VaultsActions } from '@store';
 import {
   toBN,
   normalizeAmount,
@@ -25,13 +25,13 @@ export const BackscratcherLockTx: FC<BackscratcherLockTxProps> = ({ onClose, chi
   const [amount, setAmount] = useState('');
   const [debouncedAmount] = useDebounce(amount, 500);
   const [txCompleted, setTxCompleted] = useState(false);
-  const selectedLab = useAppSelector(LabsSelectors.selectYveCrvLab);
-  const actionsStatus = useAppSelector(LabsSelectors.selectSelectedLabActionsStatusMap);
-  const selectedSellTokenAddress = selectedLab?.token.address;
-  const selectedSellToken = selectedLab?.token;
+  const selectedNav = useAppSelector(NavsSelectors.selectYveCrvNav);
+  const actionsStatus = useAppSelector(NavsSelectors.selectSelectedNavActionsStatusMap);
+  const selectedSellTokenAddress = selectedNav?.token.address;
+  const selectedSellToken = selectedNav?.token;
 
   const onExit = () => {
-    dispatch(LabsActions.clearSelectedLabAndStatus());
+    dispatch(NavsActions.clearSelectedNavAndStatus());
     dispatch(VaultsActions.clearTransactionData());
     dispatch(TokensActions.setSelectedTokenAddress({ tokenAddress: undefined }));
   };
@@ -43,29 +43,29 @@ export const BackscratcherLockTx: FC<BackscratcherLockTxProps> = ({ onClose, chi
   }, []);
 
   useEffect(() => {
-    if (!selectedLab || !selectedSellTokenAddress) return;
+    if (!selectedNav || !selectedSellTokenAddress) return;
 
     dispatch(
       TokensActions.getTokenAllowance({
         tokenAddress: selectedSellTokenAddress,
-        spenderAddress: selectedLab.address,
+        spenderAddress: selectedNav.address,
       })
     );
-  }, [selectedSellTokenAddress, selectedLab?.address]);
+  }, [selectedSellTokenAddress, selectedNav?.address]);
 
   useEffect(() => {
-    if (!selectedLab) return;
-    dispatch(LabsActions.clearLabStatus({ labAddress: selectedLab.address }));
+    if (!selectedNav) return;
+    dispatch(NavsActions.clearNavStatus({ navAddress: selectedNav.address }));
   }, [debouncedAmount]);
 
-  if (!selectedLab || !selectedSellTokenAddress || !selectedSellToken) {
+  if (!selectedNav || !selectedSellTokenAddress || !selectedSellToken) {
     return null;
   }
 
-  // TODO: generic lab allowance validation
+  // TODO: generic nav allowance validation
   const { approved: isApproved, error: allowanceError } = validateYveCrvActionsAllowance({
     action: 'LOCK',
-    labAddress: selectedLab.address,
+    navAddress: selectedNav.address,
     sellTokenAmount: toBN(amount),
     sellTokenAddress: selectedSellTokenAddress,
     sellTokenDecimals: selectedSellToken.decimals.toString(),
@@ -78,20 +78,20 @@ export const BackscratcherLockTx: FC<BackscratcherLockTxProps> = ({ onClose, chi
     emergencyShutdown: false,
     sellTokenDecimals: selectedSellToken.decimals.toString(),
     userTokenBalance: selectedSellToken.balance,
-    vaultUnderlyingBalance: selectedLab.labBalance,
+    vaultUnderlyingBalance: selectedNav.navBalance,
   });
 
   const sourceError = allowanceError || inputError;
   const targetError = actionsStatus.approveDeposit.error || actionsStatus.deposit.error;
 
-  const selectedLabOption = {
-    address: selectedLab.address,
-    symbol: selectedLab.displayName,
-    icon: selectedLab.displayIcon,
-    balance: selectedLab.DEPOSIT.userDeposited,
-    balanceUsdc: selectedLab.DEPOSIT.userDepositedUsdc,
-    decimals: selectedLab.token.decimals,
-    yield: formatPercent(selectedLab.apyData, 2),
+  const selectedNavOption = {
+    address: selectedNav.address,
+    symbol: selectedNav.displayName,
+    icon: selectedNav.displayIcon,
+    balance: selectedNav.DEPOSIT.userDeposited,
+    balanceUsdc: selectedNav.DEPOSIT.userDepositedUsdc,
+    decimals: selectedNav.token.decimals,
+    yield: formatPercent(selectedNav.apyData, 2),
   };
   const amountValue = toBN(amount).times(normalizeAmount(selectedSellToken.priceUsdc, USDC_DECIMALS)).toString();
   const expectedAmount = amount;
@@ -103,8 +103,8 @@ export const BackscratcherLockTx: FC<BackscratcherLockTxProps> = ({ onClose, chi
 
   const approve = async () => {
     await dispatch(
-      LabsActions.yveCrv.yveCrvApproveDeposit({
-        labAddress: selectedLab.address,
+      NavsActions.yveCrv.yveCrvApproveDeposit({
+        navAddress: selectedNav.address,
         tokenAddress: selectedSellToken.address,
       })
     );
@@ -113,8 +113,8 @@ export const BackscratcherLockTx: FC<BackscratcherLockTxProps> = ({ onClose, chi
   const lock = async () => {
     try {
       await dispatchAndUnwrap(
-        LabsActions.yveCrv.yveCrvDeposit({
-          labAddress: selectedLab.address,
+        NavsActions.yveCrv.yveCrvDeposit({
+          navAddress: selectedNav.address,
           tokenAddress: selectedSellToken.address,
           amount: toBN(amount),
         })
@@ -154,8 +154,8 @@ export const BackscratcherLockTx: FC<BackscratcherLockTxProps> = ({ onClose, chi
       sourceAmountValue={amountValue}
       onSourceAmountChange={setAmount}
       targetHeader={t('components.transaction.to-vault')}
-      targetAssetOptions={[selectedLabOption]}
-      selectedTargetAsset={selectedLabOption}
+      targetAssetOptions={[selectedNavOption]}
+      selectedTargetAsset={selectedNavOption}
       targetAmount={expectedAmount}
       targetAmountValue={expectedAmountValue}
       targetStatus={{ error: targetError }}

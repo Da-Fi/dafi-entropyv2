@@ -4,10 +4,10 @@ import { useHistory } from 'react-router-dom';
 
 import { useAppSelector, useAppDispatch, useIsMounting, useAppTranslation } from '@hooks';
 import {
-  LabsSelectors,
+  NavsSelectors,
   WalletSelectors,
   ModalsActions,
-  LabsActions,
+  NavsActions,
   TokensSelectors,
   ModalSelectors,
   AppSelectors,
@@ -28,7 +28,7 @@ import { SpinnerLoading, SearchInput, Text } from '@components/common';
 import { formatPercent, halfWidthCss, humanize, normalizeAmount, toBN, USDC_DECIMALS } from '@utils';
 import { getConstants } from '@config/constants';
 import { device } from '@themes/default';
-import { GeneralLabView } from '@types';
+import { GeneralNavView } from '@types';
 
 const SearchBarContainer = styled.div`
   margin: 1.2rem;
@@ -106,8 +106,8 @@ const StyledNoWalletCard = styled(NoWalletCard)`
   ${halfWidthCss}
 `;
 
-export const Labs = () => {
-  const { t } = useAppTranslation(['common', 'labs']);
+export const Navs = () => {
+  const { t } = useAppTranslation(['common', 'navs']);
 
   const { CONTRACT_ADDRESSES, NETWORK_SETTINGS } = getConstants();
   const { YVECRV, YVBOOST, PSLPYVBOOSTETH, CRV, YVTHREECRV } = CONTRACT_ADDRESSES;
@@ -117,18 +117,18 @@ export const Labs = () => {
   const walletIsConnected = useAppSelector(WalletSelectors.selectWalletIsConnected);
   const currentNetwork = useAppSelector(NetworkSelectors.selectCurrentNetwork);
   const currentNetworkSettings = NETWORK_SETTINGS[currentNetwork];
-  const { totalDeposits, totalEarnings, estYearlyYeild } = useAppSelector(LabsSelectors.selectSummaryData);
-  const recommendations = useAppSelector(LabsSelectors.selectRecommendations);
-  const holdings = useAppSelector(LabsSelectors.selectDepositedLabs);
-  const opportunities = useAppSelector(LabsSelectors.selectLabsOpportunities);
+  const { totalDeposits, totalEarnings, estYearlyYeild } = useAppSelector(NavsSelectors.selectSummaryData);
+  const recommendations = useAppSelector(NavsSelectors.selectRecommendations);
+  const holdings = useAppSelector(NavsSelectors.selectDepositedNavs);
+  const opportunities = useAppSelector(NavsSelectors.selectNavsOpportunities);
   const [filteredOpportunities, setFilteredOpportunities] = useState(opportunities);
   const activeModal = useAppSelector(ModalSelectors.selectActiveModal);
 
   const appStatus = useAppSelector(AppSelectors.selectAppStatus);
-  const labsStatus = useAppSelector(LabsSelectors.selectLabsStatus);
+  const navsStatus = useAppSelector(NavsSelectors.selectNavsStatus);
   const tokensStatus = useAppSelector(TokensSelectors.selectWalletTokensStatus);
   const generalLoading =
-    (appStatus.loading || labsStatus.loading || tokensStatus.loading || isMounting) && !activeModal;
+    (appStatus.loading || navsStatus.loading || tokensStatus.loading || isMounting) && !activeModal;
 
   // const tokenSelectorFilter = useAppSelector(TokensSelectors.selectToken);
   // const crvToken = tokenSelectorFilter(CRV);
@@ -139,8 +139,8 @@ export const Labs = () => {
     setFilteredOpportunities(opportunities);
   }, [opportunities]);
 
-  const LabHoldingsActions = ({ labAddress, alert }: { labAddress: string; alert?: string }) => {
-    switch (labAddress) {
+  const NavHoldingsActions = ({ navAddress, alert }: { navAddress: string; alert?: string }) => {
+    switch (navAddress) {
       case YVECRV:
         return (
           <ActionButtons
@@ -148,7 +148,7 @@ export const Labs = () => {
               {
                 name: t('components.transaction.lock'),
                 handler: () => {
-                  dispatch(LabsActions.setSelectedLabAddress({ labAddress }));
+                  dispatch(NavsActions.setSelectedNavAddress({ navAddress }));
                   dispatch(ModalsActions.openModal({ modalName: 'backscratcherLockTx' }));
                 },
                 disabled: !walletIsConnected,
@@ -156,7 +156,7 @@ export const Labs = () => {
               {
                 name: t('components.transaction.claim'),
                 handler: () => {
-                  dispatch(LabsActions.setSelectedLabAddress({ labAddress }));
+                  dispatch(NavsActions.setSelectedNavAddress({ navAddress }));
                   dispatch(ModalsActions.openModal({ modalName: 'backscratcherClaimTx' }));
                 },
                 disabled: !walletIsConnected,
@@ -164,7 +164,7 @@ export const Labs = () => {
               {
                 name: t('components.transaction.reinvest'),
                 handler: () => {
-                  dispatch(LabsActions.setSelectedLabAddress({ labAddress }));
+                  dispatch(NavsActions.setSelectedNavAddress({ navAddress }));
                   dispatch(ModalsActions.openModal({ modalName: 'backscratcherReinvestTx' }));
                 },
                 disabled: !walletIsConnected,
@@ -179,16 +179,16 @@ export const Labs = () => {
               {
                 name: t('components.transaction.deposit'),
                 handler: () => {
-                  dispatch(LabsActions.setSelectedLabAddress({ labAddress }));
-                  dispatch(ModalsActions.openModal({ modalName: 'labDepositTx' }));
+                  dispatch(NavsActions.setSelectedNavAddress({ navAddress }));
+                  dispatch(ModalsActions.openModal({ modalName: 'navDepositTx' }));
                 },
                 disabled: !walletIsConnected,
               },
               {
                 name: t('components.transaction.withdraw'),
                 handler: () => {
-                  dispatch(LabsActions.setSelectedLabAddress({ labAddress }));
-                  dispatch(ModalsActions.openModal({ modalName: 'labWithdrawTx' }));
+                  dispatch(NavsActions.setSelectedNavAddress({ navAddress }));
+                  dispatch(ModalsActions.openModal({ modalName: 'navWithdrawTx' }));
                 },
                 disabled: !walletIsConnected,
               },
@@ -203,16 +203,16 @@ export const Labs = () => {
               {
                 name: t('components.transaction.deposit'),
                 handler: () => {
-                  dispatch(LabsActions.setSelectedLabAddress({ labAddress }));
-                  dispatch(ModalsActions.openModal({ modalName: 'labDepositTx' }));
+                  dispatch(NavsActions.setSelectedNavAddress({ navAddress }));
+                  dispatch(ModalsActions.openModal({ modalName: 'navDepositTx' }));
                 },
                 disabled: !walletIsConnected,
               },
               {
                 name: t('components.transaction.stake'),
                 handler: () => {
-                  dispatch(LabsActions.setSelectedLabAddress({ labAddress }));
-                  dispatch(ModalsActions.openModal({ modalName: 'labStakeTx' }));
+                  dispatch(NavsActions.setSelectedNavAddress({ navAddress }));
+                  dispatch(ModalsActions.openModal({ modalName: 'navStakeTx' }));
                 },
                 disabled: !walletIsConnected,
               },
@@ -224,8 +224,8 @@ export const Labs = () => {
     }
   };
 
-  const LabOpportunitiesActions = ({ labAddress }: { labAddress: string }) => {
-    switch (labAddress) {
+  const NavOpportunitiesActions = ({ navAddress }: { navAddress: string }) => {
+    switch (navAddress) {
       case YVECRV:
         return (
           <ActionButtons
@@ -233,7 +233,7 @@ export const Labs = () => {
               {
                 name: t('components.transaction.lock'),
                 handler: () => {
-                  dispatch(LabsActions.setSelectedLabAddress({ labAddress }));
+                  dispatch(NavsActions.setSelectedNavAddress({ navAddress }));
                   dispatch(ModalsActions.openModal({ modalName: 'backscratcherLockTx' }));
                 },
                 disabled: !walletIsConnected,
@@ -249,8 +249,8 @@ export const Labs = () => {
               {
                 name: t('components.transaction.deposit'),
                 handler: () => {
-                  dispatch(LabsActions.setSelectedLabAddress({ labAddress }));
-                  dispatch(ModalsActions.openModal({ modalName: 'labDepositTx' }));
+                  dispatch(NavsActions.setSelectedNavAddress({ navAddress }));
+                  dispatch(ModalsActions.openModal({ modalName: 'navDepositTx' }));
                 },
                 disabled: !walletIsConnected,
               },
@@ -262,10 +262,10 @@ export const Labs = () => {
     }
   };
 
-  const labsHoldingsAlerts = (lab: GeneralLabView): string | undefined => {
-    switch (lab.address) {
+  const navsHoldingsAlerts = (nav: GeneralNavView): string | undefined => {
+    switch (nav.address) {
       case PSLPYVBOOSTETH:
-        if (toBN(lab.DEPOSIT.userBalance).gt(0)) {
+        if (toBN(nav.DEPOSIT.userBalance).gt(0)) {
           return t('components.list-card.available-stake');
         }
         break;
@@ -292,7 +292,7 @@ export const Labs = () => {
 
       {!generalLoading && (
         <>
-          {currentNetworkSettings.labsEnabled ? (
+          {currentNetworkSettings.navsEnabled ? (
             <Row>
               <StyledRecommendationsCard
                 header={t('components.recommendations.header')}
@@ -306,19 +306,19 @@ export const Labs = () => {
                 }))}
               />
               <StyledInfoCard
-                header={t('labs:risks-card.header')}
+                header={t('navs:risks-card.header')}
                 Component={
                   <Text>
-                    <p>{t('labs:risks-card.desc-1')}</p>
-                    <p>{t('labs:risks-card.desc-2')}</p>
-                    <p>{t('labs:risks-card.desc-3')}</p>
+                    <p>{t('navs:risks-card.desc-1')}</p>
+                    <p>{t('navs:risks-card.desc-2')}</p>
+                    <p>{t('navs:risks-card.desc-3')}</p>
                   </Text>
                 }
               />
             </Row>
           ) : (
             <StyledInfoCard
-              header={`No Labs yet on ${currentNetworkSettings.name}`}
+              header={`No Navs yet on ${currentNetworkSettings.name}`}
               Component={
                 <Text>
                   <p>{`Check back later for some new experiments.`}</p>
@@ -357,7 +357,7 @@ export const Labs = () => {
               {
                 key: 'balance',
                 header: t('components.list-card.balance'),
-                format: (lab) => humanize('amount', lab[lab.mainPositionKey].userDeposited, lab.token.decimals, 4),
+                format: (nav) => humanize('amount', nav[nav.mainPositionKey].userDeposited, nav.token.decimals, 4),
                 sortable: true,
                 width: '13rem',
                 className: 'col-balance',
@@ -365,24 +365,24 @@ export const Labs = () => {
               {
                 key: 'value',
                 header: t('components.list-card.value'),
-                format: (lab) => humanize('usd', lab[lab.mainPositionKey].userDepositedUsdc),
+                format: (nav) => humanize('usd', nav[nav.mainPositionKey].userDepositedUsdc),
                 sortable: true,
                 width: '11rem',
                 className: 'col-value',
               },
               {
                 key: 'actions',
-                transform: ({ address, alert }) => <LabHoldingsActions labAddress={address} alert={alert} />,
+                transform: ({ address, alert }) => <NavHoldingsActions navAddress={address} alert={alert} />,
                 align: 'flex-end',
                 width: 'auto',
                 grow: '1',
               },
             ]}
-            data={holdings.map((lab) => ({
-              ...lab,
-              balance: normalizeAmount(lab[lab.mainPositionKey].userDeposited, lab.token.decimals),
-              value: lab[lab.mainPositionKey].userDepositedUsdc,
-              alert: labsHoldingsAlerts(lab) ?? '',
+            data={holdings.map((nav) => ({
+              ...nav,
+              balance: normalizeAmount(nav[nav.mainPositionKey].userDeposited, nav.token.decimals),
+              value: nav[nav.mainPositionKey].userDepositedUsdc,
+              alert: navsHoldingsAlerts(nav) ?? '',
               actions: null,
             }))}
             // TODO Redirect address is wrong
@@ -417,9 +417,9 @@ export const Labs = () => {
                 className: 'col-apy',
               },
               {
-                key: 'labBalanceUsdc',
+                key: 'navBalanceUsdc',
                 header: t('components.list-card.total-assets'),
-                format: ({ labBalanceUsdc }) => humanize('usd', labBalanceUsdc, USDC_DECIMALS, 0),
+                format: ({ navBalanceUsdc }) => humanize('usd', navBalanceUsdc, USDC_DECIMALS, 0),
                 sortable: true,
                 width: '15rem',
                 className: 'col-assets',
@@ -435,15 +435,15 @@ export const Labs = () => {
               },
               {
                 key: 'actions',
-                transform: ({ address }) => <LabOpportunitiesActions labAddress={address} />,
+                transform: ({ address }) => <NavOpportunitiesActions navAddress={address} />,
                 align: 'flex-end',
                 width: 'auto',
                 grow: '1',
               },
             ]}
-            data={filteredOpportunities.map((lab) => ({
-              ...lab,
-              userTokenBalance: normalizeAmount(lab.token.balance, lab.token.decimals),
+            data={filteredOpportunities.map((nav) => ({
+              ...nav,
+              userTokenBalance: normalizeAmount(nav.token.balance, nav.token.decimals),
               actions: null,
             }))}
             SearchBar={

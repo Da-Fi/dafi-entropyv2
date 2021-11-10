@@ -20,7 +20,7 @@ import { ReactComponent as SettingsIcon } from '@assets/icons/settings.svg';
 import { ReactComponent as ThemesIcon } from '@assets/icons/themes.svg';
 import { ReactComponent as ClockIcon } from '@assets/icons/clock.svg';
 import { ReactComponent as SearchIcon } from '@assets/icons/search.svg';
-import { ReactComponent as LabsIcon } from '@assets/icons/labs.svg';
+import { ReactComponent as NavsIcon } from '@assets/icons/navs.svg';
 import { ReactComponent as CheckRoundIcon } from '@assets/icons/check-round.svg';
 import { ReactComponent as WarningIcon } from '@assets/icons/warning.svg';
 import { ReactComponent as WarningFilledIcon } from '@assets/icons/warning-filled.svg';
@@ -81,7 +81,7 @@ export {
   ThemesIcon,
   ClockIcon,
   SearchIcon,
-  LabsIcon,
+  NavsIcon,
   CheckRoundIcon,
   WarningIcon,
   WarningFilledIcon,

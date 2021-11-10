@@ -1,6 +1,6 @@
 export * from './GasService';
 export * from './IronBankService';
-export * from './LabService';
+export * from './NavService';
 export * from './SubscriptionService';
 export * from './TokenService';
 export * from './TransactionService';

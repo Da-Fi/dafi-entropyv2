@@ -17,6 +17,6 @@ export const getTheme = (theme?: Theme): DefaultTheme => {
     case 'classic':
       return classicTheme;
     default:
-      return lightTheme;
+      return darkTheme;
   }
 };

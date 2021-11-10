@@ -5,29 +5,28 @@ import { sharedTheme } from '../default';
 const lightTheme: DefaultTheme = {
   ...sharedTheme,
   colors: {
-    logo: '#006AE3',
+    logo: '#3FBFBF',
 
-    primary: '#F0F0F0',
-    background: '#FFFFFF',
-    surface: '#F0F0F0',
-
+    primary: '#3FBFBF',
+    background: '#212626',
+    surface: '#363640',
     primaryVariant: '#929292',
 
-    secondary: '#000000',
-    secondaryVariantA: '#000000',
-    secondaryVariantB: '#000000',
+    secondary: '#E8E8EA',
+    secondaryVariantA: '#363640',
+    secondaryVariantB: '#72Deff',
 
-    surfaceVariantA: '#E8E8EA',
-    surfaceVariantB: '#000000',
+    surfaceVariantA: '#555896',
+    surfaceVariantB: '#772225',
 
     selectionBar: '#000000',
 
     onPrimaryVariant: '#000000',
     onBackground: '#000000',
 
-    onSurfaceH1: '#FFFFFF',
+    onSurfaceH1: '#E8E8EA',
     onSurfaceH1Contrast: '#FFFFFF',
-    onSurfaceH2: '#000000',
+    onSurfaceH2: '#FFFFFF',
     onSurfaceH2Hover: '#FFFFFF',
     onSurfaceSH1: '#888888',
     onSurfaceSH1Hover: '#000000',
@@ -49,8 +48,8 @@ const lightTheme: DefaultTheme = {
     },
 
     walletButton: {
-      background: '#000000',
-      color: '#FFFFFF',
+      background: '#3FBFBF',
+      color: '#363640',
     },
 
     txModalColors: {

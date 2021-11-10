@@ -5,7 +5,7 @@ import { Home } from './Home';
 import { VaultDetail } from './VaultDetail';
 import { Wallet } from './Wallet';
 import { Vaults } from './Vaults';
-import { Labs } from './Labs';
+import { Navs } from './Navs';
 import { IronBank } from './IronBank';
 import { Settings } from './Settings';
 import { Disclaimer } from './Disclaimer';
@@ -24,8 +24,8 @@ const routesMap = [
     component: Vaults,
   },
   {
-    path: '/labs',
-    component: Labs,
+    path: '/navs',
+    component: Navs,
   },
   {
     path: '/ironBank',

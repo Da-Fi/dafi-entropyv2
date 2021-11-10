@@ -8,10 +8,10 @@ import {
   TokensActions,
   WalletActions,
   VaultsActions,
-  LabsActions,
+  NavsActions,
   IronBankActions,
   VaultsSelectors,
-  LabsSelectors,
+  NavsSelectors,
   IronBankSelectors,
   WalletSelectors,
   TokensSelectors,
@@ -93,13 +93,13 @@ export const Layout: FC = ({ children }) => {
   const appStatus = useAppSelector(AppSelectors.selectAppStatus);
   const tokensStatus = useAppSelector(TokensSelectors.selectWalletTokensStatus);
   const vaultsStatus = useAppSelector(VaultsSelectors.selectVaultsStatus);
-  const labsStatus = useAppSelector(LabsSelectors.selectLabsStatus);
+  const navsStatus = useAppSelector(NavsSelectors.selectNavsStatus);
   const ironBankStatus = useAppSelector(IronBankSelectors.selectIronBankStatus);
   const generalLoading =
     (appStatus.loading ||
       tokensStatus.loading ||
       vaultsStatus.loading ||
-      labsStatus.loading ||
+      navsStatus.loading ||
       ironBankStatus.loading ||
       isMounting ||
       isFetching) &&
@@ -149,14 +149,14 @@ export const Layout: FC = ({ children }) => {
   function clearUserData() {
     dispatch(TokensActions.clearUserTokenState());
     dispatch(VaultsActions.clearUserData());
-    dispatch(LabsActions.clearUserData());
+    dispatch(NavsActions.clearUserData());
     dispatch(IronBankActions.clearUserData());
   }
 
   function clearData() {
     dispatch(TokensActions.clearTokensData());
     dispatch(VaultsActions.clearVaultsData());
-    dispatch(LabsActions.clearLabsData());
+    dispatch(NavsActions.clearNavsData());
     dispatch(IronBankActions.clearIronBankData());
   }
 
@@ -170,7 +170,7 @@ export const Layout: FC = ({ children }) => {
     }
     switch (path) {
       case 'home':
-        promises.push(dispatch(LabsActions.initiateLabs()));
+        promises.push(dispatch(NavsActions.initiateNavs()));
         break;
       case 'wallet':
         promises.push(dispatch(VaultsActions.initiateSaveVaults()));
@@ -196,8 +196,8 @@ export const Layout: FC = ({ children }) => {
           })
         );
         break;
-      case 'labs':
-        promises.push(dispatch(LabsActions.initiateLabs()));
+      case 'navs':
+        promises.push(dispatch(NavsActions.initiateNavs()));
         break;
       case 'ironbank':
         promises.push(dispatch(IronBankActions.initiateIronBank()));
@@ -215,7 +215,7 @@ export const Layout: FC = ({ children }) => {
     switch (path) {
       case 'home':
         dispatch(VaultsActions.getUserVaultsSummary());
-        dispatch(LabsActions.getUserLabsPositions({}));
+        dispatch(NavsActions.getUserNavsPositions({}));
 
         dispatch(IronBankActions.getIronBankSummary()); // use only this when lens summary calculation fixed
         dispatch(IronBankActions.getUserMarketsPositions({})); // remove this when lens summary calculation fixed
@@ -239,8 +239,8 @@ export const Layout: FC = ({ children }) => {
         dispatch(VaultsActions.getUserVaultsPositions({ vaultAddresses: [assetAddress] }));
         dispatch(VaultsActions.getUserVaultsMetadata({ vaultsAddresses: [assetAddress] }));
         break;
-      case 'labs':
-        dispatch(LabsActions.getUserLabsPositions({}));
+      case 'navs':
+        dispatch(NavsActions.getUserNavsPositions({}));
         break;
       case 'ironbank':
         dispatch(IronBankActions.getIronBankSummary());

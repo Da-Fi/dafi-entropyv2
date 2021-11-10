@@ -11,7 +11,7 @@ export interface NetworkSettings {
     networkId: number;
     simulationsEnabled?: boolean;
     zapsEnabled?: boolean;
-    labsEnabled?: boolean;
+    navsEnabled?: boolean;
     ironBankEnabled?: boolean;
     earningsEnabled?: boolean;
     notifyEnabled?: boolean;

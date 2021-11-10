@@ -1,4 +1,5 @@
-# yearn.finance
+# Data Agnostic Functional Interoperability (DAFI) DAO
+# Special Thanks to yearn.finance and andre cronje, IOHK & Emurgos Cardano Ecosystem Engineers Developers  & Community 
 
 <img src="https://img.shields.io/badge/dynamic/json.svg?style=plastic&color=2096F3&label=locize&query=%24.translatedPercentage&url=https://api.locize.app/badgedata/e4f1bb87-9ed4-4f7c-8adc-d6ca4a329e52&suffix=%+translated&link=https://www.locize.com" />
 

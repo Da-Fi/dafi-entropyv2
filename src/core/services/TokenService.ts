@@ -59,15 +59,15 @@ export class TokenServiceImpl implements TokenService {
 
     // We separated this because request is broken outside of this repo so we need to handle it separated
     // so we get the rest of the tokens.
-    let labsTokens: Token[] = [];
+    let navsTokens: Token[] = [];
     try {
-      labsTokens = await this.getLabsTokens({ network });
+      navsTokens = await this.getNavsTokens({ network });
     } catch (error) {
       console.log({ error });
     }
 
     const tokens = unionBy(vaultsTokens, ironBankTokens, 'address');
-    tokens.push(...labsTokens);
+    tokens.push(...navsTokens);
     return getUniqueAndCombine(zapperTokens, tokens, 'address');
   }
 
@@ -106,9 +106,9 @@ export class TokenServiceImpl implements TokenService {
     return allowance.toString();
   }
 
-  public async getLabsTokens({ network }: { network: Network }): Promise<Token[]> {
+  public async getNavsTokens({ network }: { network: Network }): Promise<Token[]> {
     const { NETWORK_SETTINGS } = this.config;
-    if (!NETWORK_SETTINGS[network].labsEnabled) return [];
+    if (!NETWORK_SETTINGS[network].navsEnabled) return [];
     return await Promise.all([this.getYvBoostToken(), this.getPSLPyvBoostEthToken()]);
   }
 

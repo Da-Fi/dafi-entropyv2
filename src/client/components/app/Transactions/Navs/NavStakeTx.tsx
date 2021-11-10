@@ -1,7 +1,7 @@
 import { FC, useState, useEffect } from 'react';
 
 import { useAppSelector, useAppDispatch, useAppDispatchAndUnwrap, useDebounce, useAppTranslation } from '@hooks';
-import { TokensSelectors, LabsSelectors, LabsActions, TokensActions, VaultsActions } from '@store';
+import { TokensSelectors, NavsSelectors, NavsActions, TokensActions, VaultsActions } from '@store';
 import {
   toBN,
   normalizeAmount,
@@ -14,11 +14,11 @@ import {
 
 import { Transaction } from '../Transaction';
 
-export interface LabStakeTxProps {
+export interface NavStakeTxProps {
   onClose?: () => void;
 }
 
-export const LabStakeTx: FC<LabStakeTxProps> = ({ onClose, children, ...props }) => {
+export const NavStakeTx: FC<NavStakeTxProps> = ({ onClose, children, ...props }) => {
   const { t } = useAppTranslation('common');
 
   const dispatch = useAppDispatch();
@@ -26,17 +26,17 @@ export const LabStakeTx: FC<LabStakeTxProps> = ({ onClose, children, ...props })
   const [amount, setAmount] = useState('');
   const [txCompleted, setTxCompleted] = useState(false);
   const [debouncedAmount] = useDebounce(amount, 500);
-  const selectedLab = useAppSelector(LabsSelectors.selectSelectedLab);
+  const selectedNav = useAppSelector(NavsSelectors.selectSelectedNav);
   const tokenSelectorFilter = useAppSelector(TokensSelectors.selectToken);
-  const selectedSellToken = tokenSelectorFilter(selectedLab?.address ?? '');
-  selectedSellToken.balance = selectedLab?.DEPOSIT.userBalance ?? '0';
-  selectedSellToken.balanceUsdc = selectedLab?.DEPOSIT.userDepositedUsdc ?? '0';
+  const selectedSellToken = tokenSelectorFilter(selectedNav?.address ?? '');
+  selectedSellToken.balance = selectedNav?.DEPOSIT.userBalance ?? '0';
+  selectedSellToken.balanceUsdc = selectedNav?.DEPOSIT.userDepositedUsdc ?? '0';
   const selectedSellTokenAddress = selectedSellToken.address;
   const sellTokensOptions = [selectedSellToken];
-  const actionsStatus = useAppSelector(LabsSelectors.selectSelectedLabActionsStatusMap);
+  const actionsStatus = useAppSelector(NavsSelectors.selectSelectedNavActionsStatusMap);
 
   const onExit = () => {
-    dispatch(LabsActions.clearSelectedLabAndStatus());
+    dispatch(NavsActions.clearSelectedNavAndStatus());
     dispatch(VaultsActions.clearTransactionData());
     dispatch(TokensActions.setSelectedTokenAddress({ tokenAddress: undefined }));
   };
@@ -48,27 +48,27 @@ export const LabStakeTx: FC<LabStakeTxProps> = ({ onClose, children, ...props })
   }, []);
 
   useEffect(() => {
-    if (!selectedLab || !selectedSellTokenAddress) return;
+    if (!selectedNav || !selectedSellTokenAddress) return;
 
-    const spenderAddress = getStakingContractAddress(selectedLab.address);
+    const spenderAddress = getStakingContractAddress(selectedNav.address);
     dispatch(
       TokensActions.getTokenAllowance({
         tokenAddress: selectedSellTokenAddress,
         spenderAddress,
       })
     );
-  }, [selectedSellTokenAddress, selectedLab?.address]);
+  }, [selectedSellTokenAddress, selectedNav?.address]);
 
   useEffect(() => {
-    if (!selectedLab) return;
-    dispatch(LabsActions.clearLabStatus({ labAddress: selectedLab.address }));
+    if (!selectedNav) return;
+    dispatch(NavsActions.clearNavStatus({ navAddress: selectedNav.address }));
   }, [debouncedAmount]);
 
-  if (!selectedLab || !selectedSellTokenAddress || !selectedSellToken) {
+  if (!selectedNav || !selectedSellTokenAddress || !selectedSellToken) {
     return null;
   }
 
-  // TODO: USE LAB GENERAL VALIDATIONS
+  // TODO: USE NAV GENERAL VALIDATIONS
   const { approved: isApproved, error: allowanceError } = validateYvBoostEthActionsAllowance({
     sellTokenAmount: toBN(amount),
     sellTokenAddress: selectedSellTokenAddress,
@@ -83,20 +83,20 @@ export const LabStakeTx: FC<LabStakeTxProps> = ({ onClose, children, ...props })
     emergencyShutdown: false,
     sellTokenDecimals: selectedSellToken.decimals.toString(),
     userTokenBalance: selectedSellToken.balance,
-    vaultUnderlyingBalance: selectedLab.labBalance,
+    vaultUnderlyingBalance: selectedNav.navBalance,
   });
 
   const sourceError = allowanceError || inputError;
   const targetError = actionsStatus.approveDeposit.error || actionsStatus.deposit.error;
 
-  const selectedLabOption = {
-    address: selectedLab.address,
-    symbol: selectedLab.displayName,
-    icon: selectedLab.displayIcon,
-    balance: selectedLab.STAKE.userDeposited,
-    balanceUsdc: selectedLab.STAKE.userDepositedUsdc,
-    decimals: toBN(selectedLab.decimals).toNumber(),
-    yield: formatPercent(selectedLab.apyData, 2),
+  const selectedNavOption = {
+    address: selectedNav.address,
+    symbol: selectedNav.displayName,
+    icon: selectedNav.displayIcon,
+    balance: selectedNav.STAKE.userDeposited,
+    balanceUsdc: selectedNav.STAKE.userDepositedUsdc,
+    decimals: toBN(selectedNav.decimals).toNumber(),
+    yield: formatPercent(selectedNav.apyData, 2),
   };
 
   const amountValue = toBN(amount).times(normalizeAmount(selectedSellToken.priceUsdc, USDC_DECIMALS)).toString();
@@ -108,9 +108,9 @@ export const LabStakeTx: FC<LabStakeTxProps> = ({ onClose, children, ...props })
     dispatch(TokensActions.setSelectedTokenAddress({ tokenAddress }));
   };
 
-  const onSelectedLabChange = (labAddress: string) => {
+  const onSelectedNavChange = (navAddress: string) => {
     setAmount('');
-    dispatch(LabsActions.setSelectedLabAddress({ labAddress }));
+    dispatch(NavsActions.setSelectedNavAddress({ navAddress }));
   };
 
   const onTransactionCompletedDismissed = () => {
@@ -119,8 +119,8 @@ export const LabStakeTx: FC<LabStakeTxProps> = ({ onClose, children, ...props })
 
   const approve = async () => {
     await dispatch(
-      LabsActions.yvBoostEth.yvBoostEthApproveStake({
-        labAddress: selectedLab.address,
+      NavsActions.yvBoostEth.yvBoostEthApproveStake({
+        navAddress: selectedNav.address,
       })
     );
   };
@@ -128,8 +128,8 @@ export const LabStakeTx: FC<LabStakeTxProps> = ({ onClose, children, ...props })
   const deposit = async () => {
     try {
       await dispatchAndUnwrap(
-        LabsActions.yvBoostEth.yvBoostEthStake({
-          labAddress: selectedLab.address,
+        NavsActions.yvBoostEth.yvBoostEthStake({
+          navAddress: selectedNav.address,
           tokenAddress: selectedSellToken.address,
           amount: toBN(amount),
         })
@@ -168,9 +168,9 @@ export const LabStakeTx: FC<LabStakeTxProps> = ({ onClose, children, ...props })
       sourceAmountValue={amountValue}
       onSourceAmountChange={setAmount}
       targetHeader={t('components.transaction.to-gauge')}
-      targetAssetOptions={[selectedLabOption]}
-      selectedTargetAsset={selectedLabOption}
-      onSelectedTargetAssetChange={onSelectedLabChange}
+      targetAssetOptions={[selectedNavOption]}
+      selectedTargetAsset={selectedNavOption}
+      onSelectedTargetAssetChange={onSelectedNavChange}
       targetAmount={expectedAmount}
       targetAmountValue={expectedAmountValue}
       targetStatus={{ error: targetError }}

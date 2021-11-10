@@ -4,8 +4,8 @@ import { keyBy } from 'lodash';
 import { useAppSelector, useAppDispatch, useAppDispatchAndUnwrap, useDebounce, useAppTranslation } from '@hooks';
 import {
   TokensSelectors,
-  LabsSelectors,
-  LabsActions,
+  NavsSelectors,
+  NavsActions,
   VaultsSelectors,
   VaultsActions,
   TokensActions,
@@ -25,11 +25,11 @@ import { getConfig } from '@config';
 
 import { Transaction } from '../Transaction';
 
-export interface LabWithdrawTxProps {
+export interface NavWithdrawTxProps {
   onClose?: () => void;
 }
 
-export const LabWithdrawTx: FC<LabWithdrawTxProps> = ({ onClose, children, ...props }) => {
+export const NavWithdrawTx: FC<NavWithdrawTxProps> = ({ onClose, children, ...props }) => {
   const { t } = useAppTranslation('common');
 
   const dispatch = useAppDispatch();
@@ -40,32 +40,32 @@ export const LabWithdrawTx: FC<LabWithdrawTxProps> = ({ onClose, children, ...pr
   const [txCompleted, setTxCompleted] = useState(false);
   const currentNetwork = useAppSelector(NetworkSelectors.selectCurrentNetwork);
   const currentNetworkSettings = NETWORK_SETTINGS[currentNetwork];
-  const selectedLab = useAppSelector(LabsSelectors.selectSelectedLab);
+  const selectedNav = useAppSelector(NavsSelectors.selectSelectedNav);
   const tokenSelectorFilter = useAppSelector(TokensSelectors.selectToken);
-  const selectedLabToken = tokenSelectorFilter(selectedLab?.address ?? '');
+  const selectedNavToken = tokenSelectorFilter(selectedNav?.address ?? '');
   let zapOutTokens = useAppSelector(TokensSelectors.selectZapOutTokens);
-  zapOutTokens = selectedLab?.allowZapOut ? zapOutTokens : [];
-  const [selectedTargetTokenAddress, setSelectedTargetTokenAddress] = useState(selectedLab?.defaultDisplayToken ?? '');
+  zapOutTokens = selectedNav?.allowZapOut ? zapOutTokens : [];
+  const [selectedTargetTokenAddress, setSelectedTargetTokenAddress] = useState(selectedNav?.defaultDisplayToken ?? '');
   const selectedSlippage = useAppSelector(SettingsSelectors.selectDefaultSlippage);
 
-  const targetTokensOptions = selectedLab
-    ? [selectedLab.token, ...zapOutTokens.filter(({ address }) => address !== selectedLab.token.address)]
+  const targetTokensOptions = selectedNav
+    ? [selectedNav.token, ...zapOutTokens.filter(({ address }) => address !== selectedNav.token.address)]
     : zapOutTokens;
   const targetTokensOptionsMap = keyBy(targetTokensOptions, 'address');
   const selectedTargetToken = targetTokensOptionsMap[selectedTargetTokenAddress];
   const expectedTxOutcome = useAppSelector(VaultsSelectors.selectExpectedTxOutcome);
   const expectedTxOutcomeStatus = useAppSelector(VaultsSelectors.selectExpectedTxOutcomeStatus);
-  const actionsStatus = useAppSelector(LabsSelectors.selectSelectedLabActionsStatusMap);
+  const actionsStatus = useAppSelector(NavsSelectors.selectSelectedNavActionsStatusMap);
 
   const yvTokenAmount = calculateSharesAmount({
     amount: toBN(debouncedAmount),
-    decimals: selectedLab!.decimals,
-    pricePerShare: selectedLab!.pricePerShare,
+    decimals: selectedNav!.decimals,
+    pricePerShare: selectedNav!.pricePerShare,
   });
-  const yvTokenAmountNormalized = normalizeAmount(yvTokenAmount, toBN(selectedLab?.decimals).toNumber());
+  const yvTokenAmountNormalized = normalizeAmount(yvTokenAmount, toBN(selectedNav?.decimals).toNumber());
 
   const onExit = () => {
-    dispatch(LabsActions.clearSelectedLabAndStatus());
+    dispatch(NavsActions.clearSelectedNavAndStatus());
     dispatch(VaultsActions.clearTransactionData());
     dispatch(TokensActions.setSelectedTokenAddress({ tokenAddress: undefined }));
   };
@@ -77,28 +77,28 @@ export const LabWithdrawTx: FC<LabWithdrawTxProps> = ({ onClose, children, ...pr
   }, []);
 
   useEffect(() => {
-    if (!selectedLab) return;
+    if (!selectedNav) return;
 
     dispatch(
       TokensActions.getTokenAllowance({
-        tokenAddress: selectedLab.address,
+        tokenAddress: selectedNav.address,
         spenderAddress: CONTRACT_ADDRESSES.zapOut,
       })
     );
-  }, [selectedTargetTokenAddress, selectedLab?.address]);
+  }, [selectedTargetTokenAddress, selectedNav?.address]);
 
   useEffect(() => {
-    if (!selectedLab) return;
-    dispatch(LabsActions.clearLabStatus({ labAddress: selectedLab.address }));
-  }, [debouncedAmount, selectedTargetTokenAddress, selectedLab]);
+    if (!selectedNav) return;
+    dispatch(NavsActions.clearNavStatus({ navAddress: selectedNav.address }));
+  }, [debouncedAmount, selectedTargetTokenAddress, selectedNav]);
 
   useEffect(() => {
-    if (!selectedLab || !selectedTargetTokenAddress) return;
+    if (!selectedNav || !selectedTargetTokenAddress) return;
     if (toBN(debouncedAmount).gt(0) && !inputError) {
       dispatch(
         VaultsActions.getExpectedTransactionOutcome({
           transactionType: 'WITHDRAW',
-          sourceTokenAddress: selectedLab.address,
+          sourceTokenAddress: selectedNav.address,
           sourceTokenAmount: yvTokenAmount,
           targetTokenAddress: selectedTargetTokenAddress,
         })
@@ -106,24 +106,24 @@ export const LabWithdrawTx: FC<LabWithdrawTxProps> = ({ onClose, children, ...pr
     }
   }, [debouncedAmount]);
 
-  if (!selectedLab || !selectedTargetToken || !targetTokensOptions) {
+  if (!selectedNav || !selectedTargetToken || !targetTokensOptions) {
     return null;
   }
 
-  // TODO: FIX WITH CORRECT LAB VALIDATIONS
+  // TODO: FIX WITH CORRECT NAV VALIDATIONS
   const { approved: isApproved, error: allowanceError } = validateVaultWithdrawAllowance({
-    yvTokenAddress: selectedLab.address,
+    yvTokenAddress: selectedNav.address,
     yvTokenAmount: toBN(yvTokenAmountNormalized),
-    yvTokenDecimals: selectedLab.decimals,
-    underlyingTokenAddress: selectedLab.token.address,
+    yvTokenDecimals: selectedNav.decimals,
+    underlyingTokenAddress: selectedNav.token.address,
     targetTokenAddress: selectedTargetTokenAddress,
-    yvTokenAllowancesMap: selectedLab.allowancesMap,
+    yvTokenAllowancesMap: selectedNav.allowancesMap,
   });
 
   const { approved: isValidAmount, error: inputError } = validateVaultWithdraw({
     yvTokenAmount: toBN(yvTokenAmountNormalized),
-    yvTokenDecimals: selectedLab.decimals,
-    userYvTokenBalance: selectedLab.DEPOSIT.userBalance,
+    yvTokenDecimals: selectedNav.decimals,
+    userYvTokenBalance: selectedNav.DEPOSIT.userBalance,
   });
 
   const { error: slippageError } = validateSlippage({
@@ -131,18 +131,18 @@ export const LabWithdrawTx: FC<LabWithdrawTxProps> = ({ onClose, children, ...pr
     expectedSlippage: expectedTxOutcome?.slippage,
   });
 
-  const selectedLabOption = {
-    address: selectedLab.address,
-    symbol: selectedLab.displayName,
-    icon: selectedLab.displayIcon,
-    balance: selectedLab.DEPOSIT.userBalance,
-    balanceUsdc: selectedLab.DEPOSIT.userDepositedUsdc,
-    decimals: toBN(selectedLab.decimals).toNumber(),
+  const selectedNavOption = {
+    address: selectedNav.address,
+    symbol: selectedNav.displayName,
+    icon: selectedNav.displayIcon,
+    balance: selectedNav.DEPOSIT.userBalance,
+    balanceUsdc: selectedNav.DEPOSIT.userDepositedUsdc,
+    decimals: toBN(selectedNav.decimals).toNumber(),
   };
 
-  const amountValue = toBN(amount).times(normalizeAmount(selectedLabToken.priceUsdc, USDC_DECIMALS)).toString();
+  const amountValue = toBN(amount).times(normalizeAmount(selectedNavToken.priceUsdc, USDC_DECIMALS)).toString();
   const expectedAmount = toBN(debouncedAmount).gt(0)
-    ? normalizeAmount(expectedTxOutcome?.targetUnderlyingTokenAmount, selectedLab?.token.decimals)
+    ? normalizeAmount(expectedTxOutcome?.targetUnderlyingTokenAmount, selectedNav?.token.decimals)
     : '';
   const expectedAmountValue = toBN(debouncedAmount).gt(0)
     ? normalizeAmount(expectedTxOutcome?.targetTokenAmountUsdc, USDC_DECIMALS)
@@ -172,14 +172,14 @@ export const LabWithdrawTx: FC<LabWithdrawTxProps> = ({ onClose, children, ...pr
   };
 
   const approve = async () => {
-    await dispatch(LabsActions.approveWithdraw({ labAddress: selectedLab.address }));
+    await dispatch(NavsActions.approveWithdraw({ navAddress: selectedNav.address }));
   };
 
   const withdraw = async () => {
     try {
       await dispatchAndUnwrap(
-        LabsActions.withdraw({
-          labAddress: selectedLab.address,
+        NavsActions.withdraw({
+          navAddress: selectedNav.address,
           amount: toBN(amount),
           tokenAddress: selectedTargetTokenAddress,
           slippageTolerance: selectedSlippage,
@@ -212,8 +212,8 @@ export const LabWithdrawTx: FC<LabWithdrawTxProps> = ({ onClose, children, ...pr
       transactionCompletedLabel={t('components.transaction.status.exit')}
       onTransactionCompletedDismissed={onTransactionCompletedDismissed}
       sourceHeader={t('components.transaction.from-vault')}
-      sourceAssetOptions={[selectedLabOption]}
-      selectedSourceAsset={selectedLabOption}
+      sourceAssetOptions={[selectedNavOption]}
+      selectedSourceAsset={selectedNavOption}
       sourceAmount={amount}
       sourceAmountValue={amountValue}
       onSourceAmountChange={setAmount}

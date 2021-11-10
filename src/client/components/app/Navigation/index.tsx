@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { useAppDispatch, useAppSelector, useWindowDimensions } from '@hooks';
 import { SettingsActions, SettingsSelectors } from '@store';
-import { HomeIcon, WalletIcon, VaultIcon, LabsIcon, IronBankIcon, SettingsIcon } from '@components/common';
+import { HomeIcon, WalletIcon, VaultIcon, NavsIcon, IronBankIcon, SettingsIcon } from '@components/common';
 
 import { NavSidebar } from './NavSidebar';
 import { NavTabbar } from './NavTabbar';
@@ -34,9 +34,9 @@ const navLinks = [
     icon: VaultIcon,
   },
   {
-    to: '/labs',
-    text: 'navigation.labs',
-    icon: LabsIcon,
+    to: '/navs',
+    text: 'navigation.navs',
+    icon: NavsIcon,
   },
   {
     to: '/ironbank',

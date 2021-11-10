@@ -2,7 +2,7 @@ import { SharedTheme } from 'styled-components';
 
 const sharedTheme: SharedTheme = {
   blade: {
-    background: 'rgba(255, 255, 255, 0.2)',
+    background: 'rgba(104,202,333, 1)',
     blur: '15px',
   },
   navbar: {
@@ -41,7 +41,7 @@ const sharedTheme: SharedTheme = {
 
   alerts: {
     default: {
-      background: '#191919',
+      background: '#025465',
       color: 'white',
     },
     info: {
@@ -65,7 +65,7 @@ const sharedTheme: SharedTheme = {
 
   searchList: {
     primary: '#00A3FF',
-    primaryVariant: '#006AE3',
+    primaryVariant: '#3FBFBF',
     primaryHover: '#00D1FF',
     onPrimary: '#FFFFFF',
   },

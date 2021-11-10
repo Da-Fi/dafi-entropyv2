@@ -5,7 +5,7 @@ import { sharedTheme } from '../default';
 const darkTheme: DefaultTheme = {
   ...sharedTheme,
   colors: {
-    logo: '#006AE3',
+    logo: '#3FBFBF',
 
     primary: '#202020',
     background: '#191919',
@@ -13,8 +13,8 @@ const darkTheme: DefaultTheme = {
 
     primaryVariant: '#777777',
 
-    secondary: '#FFFFFF',
-    secondaryVariantA: '#000000',
+    secondary: '#2c5271',
+    secondaryVariantA: '#00ffc3',
     secondaryVariantB: '#585858',
 
     surfaceVariantA: '#1C1C1C',
@@ -49,7 +49,7 @@ const darkTheme: DefaultTheme = {
     },
 
     walletButton: {
-      background: '#006AE3',
+      background: '#3FBFBF',
       color: '#202020',
     },
 

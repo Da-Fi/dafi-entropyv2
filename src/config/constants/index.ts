@@ -19,6 +19,7 @@ const ADDRESSES = {
   PSLPYVBOOSTETH: '0xCeD67a187b923F0E5ebcc77C7f2F7da20099e378',
   PSLPYVBOOSTETH_GAUGE: '0xDA481b277dCe305B97F4091bD66595d57CF31634',
   YFI: '0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e',
+  DAFI: '0xeaad65885fea47a3b1258935f4ce83aab06fdd3a',
 };
 
 const NETWORK_SETTINGS: NetworkSettings = {
@@ -28,7 +29,7 @@ const NETWORK_SETTINGS: NetworkSettings = {
     networkId: 1,
     simulationsEnabled: true,
     zapsEnabled: true,
-    labsEnabled: true,
+    navsEnabled: true,
     ironBankEnabled: true,
     earningsEnabled: true,
     notifyEnabled: true,
@@ -40,7 +41,7 @@ const NETWORK_SETTINGS: NetworkSettings = {
     networkId: 250,
     simulationsEnabled: false,
     zapsEnabled: false,
-    labsEnabled: false,
+    navsEnabled: false,
     ironBankEnabled: true,
     earningsEnabled: false,
     notifyEnabled: false,

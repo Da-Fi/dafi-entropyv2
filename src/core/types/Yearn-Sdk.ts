@@ -35,10 +35,10 @@ interface YearnSdk {
   register: (network: Network, instance: Yearn<SdkNetwork>) => void;
 }
 
-declare type Lab = LabStatic & LabDynamic;
-interface LabStatic {
+declare type Nav = NavStatic & NavDynamic;
+interface NavStatic {
   address: Address;
-  typeId: 'LAB';
+  typeId: 'NAV';
   token: Address;
   name: string;
   version: string;
@@ -46,15 +46,15 @@ interface LabStatic {
   decimals: string;
 }
 
-interface LabDynamic {
+interface NavDynamic {
   address: Address;
-  typeId: 'LAB';
+  typeId: 'NAV';
   tokenId: Address;
   underlyingTokenBalance: TokenAmount;
-  metadata: LabMetadata;
+  metadata: NavMetadata;
 }
 
-interface LabMetadata {
+interface NavMetadata {
   pricePerShare: Integer;
   apy?: Apy;
   icon?: string;
@@ -65,7 +65,7 @@ interface LabMetadata {
   defaultDisplayToken: Address;
 }
 
-interface LabUserMetadata {}
+interface NavUserMetadata {}
 
 export type {
   SdkNetwork,
@@ -85,11 +85,11 @@ export type {
   VaultsUserSummary,
   IronBankMarketDynamic,
   CyTokenUserMetadata,
-  Lab,
-  LabStatic,
-  LabDynamic,
-  LabMetadata,
-  LabUserMetadata,
+  Nav,
+  NavStatic,
+  NavDynamic,
+  NavMetadata,
+  NavUserMetadata,
   TransactionRequest,
   TransactionResponse,
   TransactionReceipt,

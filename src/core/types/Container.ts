@@ -6,7 +6,7 @@ import {
   VaultService,
   TokenService,
   IronBankService,
-  LabService,
+  NavService,
   GasService,
   TransactionService,
   SubscriptionService,
@@ -29,7 +29,7 @@ export interface ServiceContainer {
   vaultService: VaultService;
   tokenService: TokenService;
   ironBankService: IronBankService;
-  labService: LabService;
+  navService: NavService;
   gasService: GasService;
   transactionService: TransactionService;
   subscriptionService: SubscriptionService;

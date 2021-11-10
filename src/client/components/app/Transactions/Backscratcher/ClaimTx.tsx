@@ -1,7 +1,7 @@
 import { FC, useState, useEffect } from 'react';
 
 import { useAppSelector, useAppDispatch, useAppDispatchAndUnwrap, useAppTranslation } from '@hooks';
-import { TokensSelectors, LabsSelectors, LabsActions, VaultsActions, TokensActions } from '@store';
+import { TokensSelectors, NavsSelectors, NavsActions, VaultsActions, TokensActions } from '@store';
 import { normalizeAmount, USDC_DECIMALS } from '@utils';
 import { getConfig } from '@config';
 
@@ -19,13 +19,13 @@ export const BackscratcherClaimTx: FC<BackscratcherClaimTxProps> = ({ onClose, c
   const dispatch = useAppDispatch();
   const dispatchAndUnwrap = useAppDispatchAndUnwrap();
   const [txCompleted, setTxCompleted] = useState(false);
-  const selectedLab = useAppSelector(LabsSelectors.selectYveCrvLab);
+  const selectedNav = useAppSelector(NavsSelectors.selectYveCrvNav);
   const tokenSelectorFilter = useAppSelector(TokensSelectors.selectToken);
   const selectedTargetToken = tokenSelectorFilter(THREECRV);
-  const actionsStatus = useAppSelector(LabsSelectors.selectSelectedLabActionsStatusMap);
+  const actionsStatus = useAppSelector(NavsSelectors.selectSelectedNavActionsStatusMap);
 
   const onExit = () => {
-    dispatch(LabsActions.clearSelectedLabAndStatus());
+    dispatch(NavsActions.clearSelectedNavAndStatus());
     dispatch(VaultsActions.clearTransactionData());
     dispatch(TokensActions.setSelectedTokenAddress({ tokenAddress: undefined }));
   };
@@ -36,23 +36,23 @@ export const BackscratcherClaimTx: FC<BackscratcherClaimTxProps> = ({ onClose, c
     };
   }, []);
 
-  if (!selectedLab) {
+  if (!selectedNav) {
     return null;
   }
 
   const targetError = actionsStatus.claimReward.error;
 
-  const selectedLabOption = {
-    address: selectedLab.address,
+  const selectedNavOption = {
+    address: selectedNav.address,
     symbol: selectedTargetToken.name,
     icon: selectedTargetToken.icon,
-    balance: selectedLab.YIELD.userDeposited,
-    balanceUsdc: selectedLab.YIELD.userDepositedUsdc,
+    balance: selectedNav.YIELD.userDeposited,
+    balanceUsdc: selectedNav.YIELD.userDepositedUsdc,
     decimals: selectedTargetToken.decimals,
   };
 
-  const amount = normalizeAmount(selectedLab.YIELD.userDeposited, selectedTargetToken.decimals);
-  const amountValue = normalizeAmount(selectedLab.YIELD.userDepositedUsdc, USDC_DECIMALS);
+  const amount = normalizeAmount(selectedNav.YIELD.userDeposited, selectedTargetToken.decimals);
+  const amountValue = normalizeAmount(selectedNav.YIELD.userDepositedUsdc, USDC_DECIMALS);
   const expectedAmount = amount;
   const expectedAmountValue = amountValue;
 
@@ -62,7 +62,7 @@ export const BackscratcherClaimTx: FC<BackscratcherClaimTxProps> = ({ onClose, c
 
   const claim = async () => {
     try {
-      await dispatchAndUnwrap(LabsActions.yveCrv.yveCrvClaimReward());
+      await dispatchAndUnwrap(NavsActions.yveCrv.yveCrvClaimReward());
       setTxCompleted(true);
     } catch (error) {}
   };
@@ -83,8 +83,8 @@ export const BackscratcherClaimTx: FC<BackscratcherClaimTxProps> = ({ onClose, c
       transactionCompletedLabel={t('components.transaction.status.exit')}
       onTransactionCompletedDismissed={onTransactionCompletedDismissed}
       sourceHeader={t('components.transaction.reward')}
-      sourceAssetOptions={[selectedLabOption]}
-      selectedSourceAsset={selectedLabOption}
+      sourceAssetOptions={[selectedNavOption]}
+      selectedSourceAsset={selectedNavOption}
       sourceAmount={amount}
       sourceAmountValue={amountValue}
       targetHeader={t('components.transaction.to-wallet')}

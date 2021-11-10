@@ -41,9 +41,9 @@ import ironBankReducer, { ironBankInitialState } from './ironBank/ironBank.reduc
 import { IronBankActions } from './ironBank/ironBank.actions';
 import { IronBankSelectors } from './ironBank/ironBank.selectors';
 
-import labsReducer, { labsInitialState } from './labs/labs.reducer';
-import { LabsActions } from './labs/labs.actions';
-import { LabsSelectors } from './labs/labs.selectors';
+import navsReducer, { navsInitialState } from './navs/navs.reducer';
+import { NavsActions } from './navs/navs.actions';
+import { NavsSelectors } from './navs/navs.selectors';
 
 import settingsReducer, { settingsInitialState } from './settings/settings.reducer';
 import { SettingsActions } from './settings/settings.actions';
@@ -60,7 +60,7 @@ const rootReducer: Reducer<RootState> = combineReducers({
   wallet: walletReducer,
   tokens: tokensReducer,
   ironBank: ironBankReducer,
-  labs: labsReducer,
+  navs: navsReducer,
   settings: settingsReducer,
 });
 
@@ -78,7 +78,7 @@ export {
   WalletActions,
   TokensActions,
   IronBankActions,
-  LabsActions,
+  NavsActions,
   SettingsActions,
 };
 
@@ -94,7 +94,7 @@ export {
   IronBankSelectors,
   TokensSelectors,
   SettingsSelectors,
-  LabsSelectors,
+  NavsSelectors,
 };
 
 // initialState
@@ -109,6 +109,6 @@ export {
   walletInitialState,
   tokensInitialState,
   ironBankInitialState,
-  labsInitialState,
+  navsInitialState,
   settingsInitialState,
 };

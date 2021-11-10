@@ -11,9 +11,9 @@ import { DepositTxModal } from './DepositTxModal';
 import { WithdrawTxModal } from './WithdrawTxModal';
 import { MigrateTxModal } from './MigrateTxModal';
 import { BackscratcherLockTxModal, BackscratcherClaimTxModal, BackscratcherReinvestTxModal } from './Backscratcher';
-import { LabDepositTxModal } from './LabDepositTxModal';
-import { LabWithdrawTxModal } from './LabWithdrawTxModal';
-import { LabStakeTxModal } from './LabStakeTxModal';
+import { NavDepositTxModal } from './NavDepositTxModal';
+import { NavWithdrawTxModal } from './NavWithdrawTxModal';
+import { NavStakeTxModal } from './NavStakeTxModal';
 import {
   IronBankSupplyTxModal,
   IronBankWithdrawTxModal,
@@ -164,21 +164,21 @@ export const Modals = () => {
         </CSSTransition>
       )}
 
-      {activeModal === 'labDepositTx' && (
-        <CSSTransition key={'labDepositTx'} timeout={modalTimeout} classNames="slideBottom">
-          <LabDepositTxModal onClose={closeModal} />
+      {activeModal === 'navDepositTx' && (
+        <CSSTransition key={'navDepositTx'} timeout={modalTimeout} classNames="slideBottom">
+          <NavDepositTxModal onClose={closeModal} />
         </CSSTransition>
       )}
 
-      {activeModal === 'labWithdrawTx' && (
-        <CSSTransition key={'labWithdrawTx'} timeout={modalTimeout} classNames="slideBottom">
-          <LabWithdrawTxModal onClose={closeModal} />
+      {activeModal === 'navWithdrawTx' && (
+        <CSSTransition key={'navWithdrawTx'} timeout={modalTimeout} classNames="slideBottom">
+          <NavWithdrawTxModal onClose={closeModal} />
         </CSSTransition>
       )}
 
-      {activeModal === 'labStakeTx' && (
-        <CSSTransition key={'labStakeTx'} timeout={modalTimeout} classNames="slideBottom">
-          <LabStakeTxModal onClose={closeModal} />
+      {activeModal === 'navStakeTx' && (
+        <CSSTransition key={'navStakeTx'} timeout={modalTimeout} classNames="slideBottom">
+          <NavStakeTxModal onClose={closeModal} />
         </CSSTransition>
       )}
 

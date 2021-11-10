@@ -9,7 +9,7 @@ import {
   Integer,
   Balance,
   IronBankMarket,
-  Lab,
+  Nav,
   VaultsUserSummary,
   VaultUserMetadata,
   TransactionOutcome,
@@ -28,7 +28,7 @@ export interface RootState {
   wallet: WalletState;
   tokens: TokensState;
   ironBank: IronBankState;
-  labs: LabsState;
+  navs: NavsState;
   settings: SettingsState;
 }
 
@@ -200,15 +200,15 @@ export interface SettingsState {
   };
 }
 
-export interface LabsPositionsMap {
+export interface NavsPositionsMap {
   DEPOSIT: Position;
   YIELD: Position;
   STAKE: Position;
 }
 
-export type LabsPositionsTypes = keyof LabsPositionsMap;
+export type NavsPositionsTypes = keyof NavsPositionsMap;
 
-export interface LabActionsStatusMap {
+export interface NavActionsStatusMap {
   get: Status;
   approveDeposit: Status;
   deposit: Status;
@@ -222,26 +222,26 @@ export interface LabActionsStatusMap {
   approveStake: Status;
   stake: Status;
 }
-export interface UserLabActionsStatusMap {
+export interface UserNavActionsStatusMap {
   get: Status;
   getPositions: Status;
 }
 
-export interface LabsState {
-  labsAddresses: string[];
-  labsMap: { [address: string]: Lab };
-  selectedLabAddress: Address | undefined;
+export interface NavsState {
+  navsAddresses: string[];
+  navsMap: { [address: string]: Nav };
+  selectedNavAddress: Address | undefined;
   user: {
-    userLabsPositionsMap: { [address: string]: LabsPositionsMap };
-    labsAllowancesMap: { [labAddress: string]: AllowancesMap };
+    userNavsPositionsMap: { [address: string]: NavsPositionsMap };
+    navsAllowancesMap: { [navAddress: string]: AllowancesMap };
   };
   statusMap: {
-    initiateLabs: Status;
-    getLabs: Status;
-    labsActionsStatusMap: { [labAddress: string]: LabActionsStatusMap };
+    initiateNavs: Status;
+    getNavs: Status;
+    navsActionsStatusMap: { [navAddress: string]: NavActionsStatusMap };
     user: {
-      getUserLabsPositions: Status;
-      userLabsActionsStatusMap: { [labAddress: string]: UserLabActionsStatusMap };
+      getUserNavsPositions: Status;
+      userNavsActionsStatusMap: { [navAddress: string]: UserNavActionsStatusMap };
     };
   };
 }

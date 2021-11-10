@@ -11,11 +11,11 @@ interface FooterProps {
 
 const footerLinks = [
   {
-    link: 'https://gov.yearn.finance',
+    link: 'https://github.com/The-Blockchain-Company',
     name: 'gov',
   },
   {
-    link: 'https://docs.yearn.finance',
+    link: 'https://da-fi.com',
     name: 'docs',
   },
   {
@@ -38,23 +38,23 @@ const footerLinks = [
 
 const socialLinks = [
   {
-    link: 'https://twitter.com/iearnfinance',
+    link: 'https://twitter.com/DaFi_DAO',
     icon: TwitterIcon,
   },
   {
-    link: 'https://github.com/yearn',
+    link: 'https://github.com/Da-Fi',
     icon: GithubIcon,
   },
   {
-    link: 'https://discord.yearn.finance',
+    link: 'https://discord.com/channels/797319191107338271/797319609514459168',
     icon: DiscordIcon,
   },
   {
-    link: 'https://medium.com/iearn',
+    link: 'https://medium.com/@robert-mourey-jr',
     icon: MediumIcon,
   },
   {
-    link: 'https://t.me/yearnfinance',
+    link: 'https://t.me/DaFi_DAO',
     icon: TelegramIcon,
   },
 ];

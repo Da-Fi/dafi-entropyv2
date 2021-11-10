@@ -150,8 +150,7 @@ export const Wallet = () => {
           Component={
             <Text>
               <p>
-                {t('components.beta-card.desc-1')} <StyledLink href="https://discord.gg/Rw9zA3GbyE">Discord</StyledLink>
-                .
+                {t('components.beta-card.desc-1')} <StyledLink href="https://discord.gg/W5aUBpy4">Discord</StyledLink>.
               </p>
             </Text>
           }

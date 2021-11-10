@@ -1,7 +1,7 @@
 import { FC, useState, useEffect } from 'react';
 
 import { useAppSelector, useAppDispatch, useAppDispatchAndUnwrap, useAppTranslation } from '@hooks';
-import { VaultsSelectors, LabsSelectors, LabsActions, VaultsActions, TokensActions } from '@store';
+import { VaultsSelectors, NavsSelectors, NavsActions, VaultsActions, TokensActions } from '@store';
 import { formatPercent, normalizeAmount, toBN, USDC_DECIMALS, validateYveCrvActionsAllowance } from '@utils';
 import { getConfig } from '@config';
 
@@ -19,14 +19,14 @@ export const BackscratcherReinvestTx: FC<BackscratcherReinvestTxProps> = ({ onCl
   const dispatch = useAppDispatch();
   const dispatchAndUnwrap = useAppDispatchAndUnwrap();
   const [txCompleted, setTxCompleted] = useState(false);
-  const selectedLab = useAppSelector(LabsSelectors.selectYveCrvLab);
+  const selectedNav = useAppSelector(NavsSelectors.selectYveCrvNav);
   const vaultSelectorFilter = useAppSelector(VaultsSelectors.selectVault);
   const selectedTargetVault = vaultSelectorFilter(YVTHREECRV);
   const selectedTargetToken = selectedTargetVault?.token;
-  const actionsStatus = useAppSelector(LabsSelectors.selectSelectedLabActionsStatusMap);
+  const actionsStatus = useAppSelector(NavsSelectors.selectSelectedNavActionsStatusMap);
 
   const onExit = () => {
-    dispatch(LabsActions.clearSelectedLabAndStatus());
+    dispatch(NavsActions.clearSelectedNavAndStatus());
     dispatch(VaultsActions.clearTransactionData());
     dispatch(TokensActions.setSelectedTokenAddress({ tokenAddress: undefined }));
   };
@@ -46,12 +46,12 @@ export const BackscratcherReinvestTx: FC<BackscratcherReinvestTxProps> = ({ onCl
     };
   }, [selectedTargetToken?.address]);
 
-  if (!selectedLab || !selectedTargetVault || !selectedTargetToken) {
+  if (!selectedNav || !selectedTargetVault || !selectedTargetToken) {
     return null;
   }
 
-  const selectedLabOption = {
-    address: selectedLab.address,
+  const selectedNavOption = {
+    address: selectedNav.address,
     symbol: selectedTargetToken.name,
     icon: selectedTargetToken.icon,
     balance: selectedTargetVault.DEPOSIT.userDeposited,
@@ -69,15 +69,15 @@ export const BackscratcherReinvestTx: FC<BackscratcherReinvestTxProps> = ({ onCl
     yield: formatPercent(selectedTargetVault.apyData, 2),
   };
 
-  const amount = normalizeAmount(selectedLab.YIELD.userDeposited, selectedTargetToken.decimals);
-  const amountValue = normalizeAmount(selectedLab.YIELD.userDepositedUsdc, USDC_DECIMALS);
+  const amount = normalizeAmount(selectedNav.YIELD.userDeposited, selectedTargetToken.decimals);
+  const amountValue = normalizeAmount(selectedNav.YIELD.userDepositedUsdc, USDC_DECIMALS);
   const expectedAmount = amount;
   const expectedAmountValue = amountValue;
 
-  // TODO: generic lab allowance validation
+  // TODO: generic nav allowance validation
   const { approved: isApproved, error: allowanceError } = validateYveCrvActionsAllowance({
     action: 'REINVEST',
-    labAddress: selectedLab.address,
+    navAddress: selectedNav.address,
     sellTokenAmount: toBN(amount),
     sellTokenAddress: selectedTargetToken.address,
     sellTokenDecimals: selectedTargetToken.decimals.toString(),
@@ -93,8 +93,8 @@ export const BackscratcherReinvestTx: FC<BackscratcherReinvestTxProps> = ({ onCl
 
   const approve = async () => {
     await dispatch(
-      LabsActions.yveCrv.yveCrvApproveReinvest({
-        labAddress: selectedLab.address,
+      NavsActions.yveCrv.yveCrvApproveReinvest({
+        navAddress: selectedNav.address,
         tokenAddress: selectedTargetToken.address,
       })
     );
@@ -102,7 +102,7 @@ export const BackscratcherReinvestTx: FC<BackscratcherReinvestTxProps> = ({ onCl
 
   const reinvest = async () => {
     try {
-      await dispatchAndUnwrap(LabsActions.yveCrv.yveCrvReinvest());
+      await dispatchAndUnwrap(NavsActions.yveCrv.yveCrvReinvest());
       setTxCompleted(true);
     } catch (error) {}
   };
@@ -129,8 +129,8 @@ export const BackscratcherReinvestTx: FC<BackscratcherReinvestTxProps> = ({ onCl
       transactionCompletedLabel={t('components.transaction.status.exit')}
       onTransactionCompletedDismissed={onTransactionCompletedDismissed}
       sourceHeader={t('components.transaction.reward')}
-      sourceAssetOptions={[selectedLabOption]}
-      selectedSourceAsset={selectedLabOption}
+      sourceAssetOptions={[selectedNavOption]}
+      selectedSourceAsset={selectedNavOption}
       sourceAmount={amount}
       sourceAmountValue={amountValue}
       targetHeader={t('components.transaction.to-vault')}

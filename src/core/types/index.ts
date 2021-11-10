@@ -4,7 +4,7 @@ export * from './Config';
 export * from './Container';
 export * from './General';
 export * from './IronBank';
-export * from './Lab';
+export * from './Nav';
 export * from './Modals';
 export * from './Position';
 export * from './Service';

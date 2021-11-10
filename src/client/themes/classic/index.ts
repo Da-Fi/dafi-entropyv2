@@ -9,22 +9,22 @@ const classicTheme: DefaultTheme = {
     image: ClassicBackground,
   },
   colors: {
-    logo: '#006AE3',
+    logo: '#3FBFBF',
 
-    primary: '#0A1D3F',
-    background: '#1F255F',
-    surface: '#0A1D3F',
+    primary: '#2c3b57',
+    background: '#363640',
+    surface: '#2c3b57',
 
-    primaryVariant: '#b5b5b5',
+    primaryVariant: '#2dd',
 
-    secondary: '#fff',
-    secondaryVariantA: '#006AE3',
-    secondaryVariantB: '#006AE3',
+    secondary: '#363640',
+    secondaryVariantA: '#3FBFBF',
+    secondaryVariantB: '#3FBFBF',
 
-    surfaceVariantA: '#1F255F',
-    surfaceVariantB: '#1F255F',
+    surfaceVariantA: '#363640',
+    surfaceVariantB: '#363640',
 
-    selectionBar: '#006AE3',
+    selectionBar: '#3FBFBF',
 
     onPrimaryVariant: '#E5E5E5',
     onBackground: '#E5E5E5',
@@ -54,16 +54,16 @@ const classicTheme: DefaultTheme = {
 
     walletButton: {
       background: '#E5E5E5',
-      color: '#006AE3',
+      color: '#3FBFBF',
     },
 
     txModalColors: {
-      background: '#0A1D3F',
-      backgroundVariant: '#1F255F',
-      onBackgroundVariant: '#0A1D3F',
-      onBackgroundVariantB: '#1F255F',
+      background: '#2c3b57',
+      backgroundVariant: '#363640',
+      onBackgroundVariant: '#2c3b57',
+      onBackgroundVariantB: '#363640',
       onBackgroundVariantColor: '#fff',
-      primary: '#006AE3',
+      primary: '#3FBFBF',
       loading: '#FFA800',
       error: '#EF1E02',
       success: '#01E2A0',

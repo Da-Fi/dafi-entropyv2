@@ -1,22 +1,22 @@
-import { AllowancesMap, LabsPositionsTypes } from './State';
+import { AllowancesMap, NavsPositionsTypes } from './State';
 import { TokenView } from './Token';
 
 // This General naming means it has the positions inside as keys
-export interface GeneralLabView {
+export interface GeneralNavView {
   address: string;
   name: string;
   displayName: string;
   displayIcon: string;
   defaultDisplayToken: string;
   decimals: string;
-  labBalance: string;
-  labBalanceUsdc: string;
+  navBalance: string;
+  navBalanceUsdc: string;
   apyData: string;
   allowancesMap: AllowancesMap;
   pricePerShare: string;
   allowZapIn: boolean;
   allowZapOut: boolean;
-  mainPositionKey: LabsPositionsTypes;
+  mainPositionKey: NavsPositionsTypes;
   DEPOSIT: {
     userBalance: string;
     userDeposited: string;

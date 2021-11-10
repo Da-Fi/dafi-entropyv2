@@ -8,9 +8,9 @@ import {
   CyTokenUserMetadata,
   IronBankMarketDynamic,
   IronBankUserSummary,
-  Lab,
-  LabDynamic,
-  LabUserMetadata,
+  Nav,
+  NavDynamic,
+  NavUserMetadata,
   TransactionResponse,
   Address,
   Integer,
@@ -150,12 +150,12 @@ export interface ApproveProps {
   amount: Wei;
 }
 
-// *************** LABS ***************
-export interface LabService {
-  getSupportedLabs: (props: GetSupportedLabsProps) => Promise<{ labsData: Lab[]; errors: string[] }>;
-  getLabsDynamicData: (props: GetLabsDynamicDataProps) => Promise<LabDynamic[]>;
-  getUserLabsPositions: (props: GetUserLabsPositionsProps) => Promise<{ positions: Position[]; errors: string[] }>;
-  getUserLabsMetadata: (props: GetUserLabsMetadataProps) => Promise<LabUserMetadata[]>;
+// *************** NAVS ***************
+export interface NavService {
+  getSupportedNavs: (props: GetSupportedNavsProps) => Promise<{ navsData: Nav[]; errors: string[] }>;
+  getNavsDynamicData: (props: GetNavsDynamicDataProps) => Promise<NavDynamic[]>;
+  getUserNavsPositions: (props: GetUserNavsPositionsProps) => Promise<{ positions: Position[]; errors: string[] }>;
+  getUserNavsMetadata: (props: GetUserNavsMetadataProps) => Promise<NavUserMetadata[]>;
   deposit: (props: DepositProps) => Promise<TransactionResponse>;
   withdraw: (props: WithdrawProps) => Promise<TransactionResponse>;
   stake: (props: StakeProps) => Promise<TransactionResponse>;
@@ -164,20 +164,20 @@ export interface LabService {
   reinvest: (props: ReinvestProps) => Promise<TransactionResponse>;
 }
 
-export interface GetSupportedLabsProps {
+export interface GetSupportedNavsProps {
   network: Network;
 }
 
-export interface GetLabsDynamicDataProps {
+export interface GetNavsDynamicDataProps {
   network: Network;
 }
 
-export interface GetUserLabsPositionsProps {
+export interface GetUserNavsPositionsProps {
   network: Network;
   userAddress: Address;
 }
 
-export interface GetUserLabsMetadataProps {
+export interface GetUserNavsMetadataProps {
   userAddress: Address;
 }
 
